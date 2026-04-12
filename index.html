@@ -6,8 +6,8 @@
 <title>VIMA Corp</title>
 <style>
 /* ============================================================
-   VIMA Corp â Umbrella Platform
-   Analytics Â· Pricing Â· Studio
+   VIMA Corp — Umbrella Platform
+   Analytics · Pricing · Studio
    ============================================================ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -248,31 +248,31 @@ select.form-input{cursor:pointer}
   </nav>
 
   <section class="hero">
-    <h1>DecisÃµes de compra<br>com <span class="grad">inteligÃªncia real</span></h1>
-    <p>Analise catÃ¡logos de fornecedores, cruze com demanda dos marketplaces, precifique com precisÃ£o e venda com margem. Tudo em uma plataforma.</p>
+    <h1>Decisões de compra<br>com <span class="grad">inteligência real</span></h1>
+    <p>Analise catálogos de fornecedores, cruze com demanda dos marketplaces, precifique com precisão e venda com margem. Tudo em uma plataforma.</p>
     <div class="hero-cta">
-      <button class="btn btn-primary" onclick="enterApp()" style="font-size:1rem;padding:.8rem 2rem">ComeÃ§ar Agora â</button>
+      <button class="btn btn-primary" onclick="enterApp()" style="font-size:1rem;padding:.8rem 2rem">Começar Agora →</button>
       <button class="btn btn-ghost" style="font-size:1rem;padding:.8rem 2rem">Ver Demo</button>
     </div>
   </section>
 
   <section class="modules" id="modulesSection">
     <div class="module-card mc-analytics" onclick="enterApp('analytics')">
-      <div class="icon">ð</div>
+      <div class="icon">📊</div>
       <h3>VIMA Analytics</h3>
-      <p>Upload de catÃ¡logo â IA extrai produtos â cruza com demanda real â ranking ABC â sugere kits â dashboard interativo com campos editÃ¡veis de custo e margem dinÃ¢mica.</p>
+      <p>Upload de catálogo → IA extrai produtos → cruza com demanda real → ranking ABC → sugere kits → dashboard interativo com campos editáveis de custo e margem dinâmica.</p>
       <span class="tag tag-new">NOVO</span>
     </div>
     <div class="module-card mc-pricing" onclick="enterApp('pricing')">
-      <div class="icon">ð°</div>
+      <div class="icon">💰</div>
       <h3>VIMA Pricing</h3>
       <p>Calculadora multi-marketplace com comparativo lado a lado. Simule Mercado Livre, Amazon, Shopee, Magalu e TikTok Shop com taxas reais atualizadas.</p>
       <span class="tag tag-new">NOVO</span>
     </div>
     <div class="module-card mc-studio" onclick="event.preventDefault()">
-      <div class="icon">ð¨</div>
+      <div class="icon">🎨</div>
       <h3>VIMA Studio</h3>
-      <p>GeraÃ§Ã£o automÃ¡tica de carrosseis criativos com IA. Upload de foto â briefing estratÃ©gico â 6 imagens otimizadas para conversÃ£o em marketplaces.</p>
+      <p>Geração automática de carrosseis criativos com IA. Upload de foto → briefing estratégico → 6 imagens otimizadas para conversão em marketplaces.</p>
       <span class="tag tag-beta">BETA</span>
     </div>
   </section>
@@ -290,31 +290,31 @@ select.form-input{cursor:pointer}
       <div class="nav-section">
         <div class="nav-section-title">Analytics</div>
         <a class="nav-item active" data-view="analytics-dashboard" onclick="switchView(this)">
-          <span class="nav-icon">ð</span> Dashboard
+          <span class="nav-icon">📊</span> Dashboard
         </a>
         <a class="nav-item" data-view="analytics-catalog" onclick="switchView(this)">
-          <span class="nav-icon">ð</span> CatÃ¡logos
+          <span class="nav-icon">📁</span> Catálogos
         </a>
         <a class="nav-item" data-view="analytics-demand" onclick="switchView(this)">
-          <span class="nav-icon">ð</span> Demanda
+          <span class="nav-icon">📈</span> Demanda
         </a>
         <a class="nav-item" data-view="analytics-kits" onclick="switchView(this)">
-          <span class="nav-icon">ð§©</span> Kits Sugeridos
+          <span class="nav-icon">🧩</span> Kits Sugeridos
         </a>
       </div>
       <div class="nav-section">
         <div class="nav-section-title">Pricing</div>
         <a class="nav-item" data-view="pricing-calc" onclick="switchView(this)">
-          <span class="nav-icon">ð°</span> Calculadora
+          <span class="nav-icon">💰</span> Calculadora
         </a>
         <a class="nav-item" data-view="pricing-compare" onclick="switchView(this)">
-          <span class="nav-icon">âï¸</span> Comparativo
+          <span class="nav-icon">⚖️</span> Comparativo
         </a>
       </div>
       <div class="nav-section">
         <div class="nav-section-title">Studio</div>
         <a class="nav-item" data-view="studio" onclick="switchView(this)" style="opacity:.5">
-          <span class="nav-icon">ð¨</span> Criativos <span class="tag tag-beta" style="margin:0;margin-left:auto;font-size:.6rem">BETA</span>
+          <span class="nav-icon">🎨</span> Criativos <span class="tag tag-beta" style="margin:0;margin-left:auto;font-size:.6rem">BETA</span>
         </a>
       </div>
     </nav>
@@ -329,10 +329,10 @@ select.form-input{cursor:pointer}
 
   <div class="main">
     <div class="topbar">
-      <h2 id="viewTitle">VIMA Analytics â Dashboard</h2>
+      <h2 id="viewTitle">VIMA Analytics — Dashboard</h2>
       <div class="topbar-actions">
-        <button class="btn btn-sm btn-outline" onclick="loadDemoData()">ð Carregar Demo</button>
-        <button class="btn btn-sm btn-primary" onclick="document.getElementById('fileInput').click()">ð Importar CatÃ¡logo</button>
+        <button class="btn btn-sm btn-outline" onclick="loadDemoData()">🔄 Carregar Demo</button>
+        <button class="btn btn-sm btn-primary" onclick="document.getElementById('fileInput').click()">📁 Importar Catálogo</button>
         <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.pdf" style="display:none" onchange="handleFileUpload(event)">
       </div>
     </div>
@@ -345,7 +345,7 @@ select.form-input{cursor:pointer}
 
 <script>
 // ============================================================
-// VIMA Corp â Main Application Logic
+// VIMA Corp — Main Application Logic
 // ============================================================
 
 // ---------- STATE ----------
@@ -360,26 +360,26 @@ const state = {
 // ---------- DEMO DATA ----------
 function generateDemoProducts() {
   const items = [
-    {sku:'GAV-001',nome:'Gaveteiro Organizador 4 Andares Multiuso',custo:24.89,peso:.8,cat:'OrganizaÃ§Ã£o',img:'ð¦'},
-    {sku:'PAN-002',nome:'Jogo de Panelas Antiaderente 5 PeÃ§as',custo:89.90,peso:3.2,cat:'Cozinha',img:'ð³'},
-    {sku:'CXO-003',nome:'Caixa Organizadora Rattan 4L com Tampa',custo:11.28,peso:.3,cat:'OrganizaÃ§Ã£o',img:'ð¦'},
-    {sku:'FRM-004',nome:'Forma de Pudim para Microondas 1,9L',custo:4.37,peso:.2,cat:'Cozinha',img:'ð®'},
-    {sku:'DSP-005',nome:'Kit 2 Dispenser 2,3L Detergente/SabÃ£o',custo:18.50,peso:.6,cat:'Cozinha',img:'ð§´'},
-    {sku:'VAS-006',nome:'Vaso AutoirrigÃ¡vel Polietileno N3',custo:7.90,peso:.4,cat:'Jardim',img:'ð±'},
-    {sku:'LMP-007',nome:'LuminÃ¡ria LED Touch RecarregÃ¡vel USB',custo:32.50,peso:.35,cat:'IluminaÃ§Ã£o',img:'ð¡'},
-    {sku:'ORG-008',nome:'Organizador de Pia Cozinha Inox',custo:15.60,peso:.5,cat:'Cozinha',img:'ð§'},
-    {sku:'PRT-009',nome:'Porta PÃ£o de Forma Transparente',custo:9.45,peso:.25,cat:'Cozinha',img:'ð'},
-    {sku:'JGF-010',nome:'Jogo de Facas 7 PeÃ§as com Cepo',custo:42.80,peso:1.8,cat:'Cozinha',img:'ðª'},
-    {sku:'SEC-011',nome:'Secador de Saladas 5,5L Clear Fresh',custo:14.20,peso:.6,cat:'Cozinha',img:'ð¥'},
-    {sku:'GAL-012',nome:'Jogo Galheteiro Porta Condimentos Inox',custo:28.70,peso:.9,cat:'Cozinha',img:'ð§'},
-    {sku:'CSP-013',nome:'Caspo Polietileno Jardim N4 Premium',custo:12.50,peso:.5,cat:'Jardim',img:'ðª´'},
-    {sku:'KIT-014',nome:'Kit Banheiro 5 PeÃ§as CerÃ¢mica',custo:35.90,peso:2.0,cat:'Banheiro',img:'ð¿'},
-    {sku:'PPR-015',nome:'Porta Papel Toalha Inox de Bancada',custo:22.30,peso:.7,cat:'Cozinha',img:'ð§»'},
-    {sku:'TBR-016',nome:'TÃ¡bua de Corte Bambu 38x28cm',custo:19.90,peso:.6,cat:'Cozinha',img:'ðªµ'},
-    {sku:'LXR-017',nome:'Lixeira AutomÃ¡tica Sensor 12L Inox',custo:78.50,peso:2.5,cat:'Casa',img:'ðï¸'},
-    {sku:'ESC-018',nome:'Escorredor de LouÃ§as Inox 2 Andares',custo:45.60,peso:1.5,cat:'Cozinha',img:'ð½ï¸'},
-    {sku:'CJG-019',nome:'Conjunto Potes HermÃ©ticos 10 PeÃ§as',custo:29.90,peso:1.2,cat:'Cozinha',img:'ð«'},
-    {sku:'ARM-020',nome:'Aromatizador Ambiente Varetas 250ml',custo:8.90,peso:.4,cat:'Casa',img:'ð¯ï¸'},
+    {sku:'GAV-001',nome:'Gaveteiro Organizador 4 Andares Multiuso',custo:24.89,peso:.8,cat:'Organização',img:'📦'},
+    {sku:'PAN-002',nome:'Jogo de Panelas Antiaderente 5 Peças',custo:89.90,peso:3.2,cat:'Cozinha',img:'🍳'},
+    {sku:'CXO-003',nome:'Caixa Organizadora Rattan 4L com Tampa',custo:11.28,peso:.3,cat:'Organização',img:'📦'},
+    {sku:'FRM-004',nome:'Forma de Pudim para Microondas 1,9L',custo:4.37,peso:.2,cat:'Cozinha',img:'🍮'},
+    {sku:'DSP-005',nome:'Kit 2 Dispenser 2,3L Detergente/Sabão',custo:18.50,peso:.6,cat:'Cozinha',img:'🧴'},
+    {sku:'VAS-006',nome:'Vaso Autoirrigável Polietileno N3',custo:7.90,peso:.4,cat:'Jardim',img:'🌱'},
+    {sku:'LMP-007',nome:'Luminária LED Touch Recarregável USB',custo:32.50,peso:.35,cat:'Iluminação',img:'💡'},
+    {sku:'ORG-008',nome:'Organizador de Pia Cozinha Inox',custo:15.60,peso:.5,cat:'Cozinha',img:'🔧'},
+    {sku:'PRT-009',nome:'Porta Pão de Forma Transparente',custo:9.45,peso:.25,cat:'Cozinha',img:'🍞'},
+    {sku:'JGF-010',nome:'Jogo de Facas 7 Peças com Cepo',custo:42.80,peso:1.8,cat:'Cozinha',img:'🔪'},
+    {sku:'SEC-011',nome:'Secador de Saladas 5,5L Clear Fresh',custo:14.20,peso:.6,cat:'Cozinha',img:'🥗'},
+    {sku:'GAL-012',nome:'Jogo Galheteiro Porta Condimentos Inox',custo:28.70,peso:.9,cat:'Cozinha',img:'🧂'},
+    {sku:'CSP-013',nome:'Caspo Polietileno Jardim N4 Premium',custo:12.50,peso:.5,cat:'Jardim',img:'🪴'},
+    {sku:'KIT-014',nome:'Kit Banheiro 5 Peças Cerâmica',custo:35.90,peso:2.0,cat:'Banheiro',img:'🚿'},
+    {sku:'PPR-015',nome:'Porta Papel Toalha Inox de Bancada',custo:22.30,peso:.7,cat:'Cozinha',img:'🧻'},
+    {sku:'TBR-016',nome:'Tábua de Corte Bambu 38x28cm',custo:19.90,peso:.6,cat:'Cozinha',img:'🪵'},
+    {sku:'LXR-017',nome:'Lixeira Automática Sensor 12L Inox',custo:78.50,peso:2.5,cat:'Casa',img:'🗑️'},
+    {sku:'ESC-018',nome:'Escorredor de Louças Inox 2 Andares',custo:45.60,peso:1.5,cat:'Cozinha',img:'🍽️'},
+    {sku:'CJG-019',nome:'Conjunto Potes Herméticos 10 Peças',custo:29.90,peso:1.2,cat:'Cozinha',img:'🫙'},
+    {sku:'ARM-020',nome:'Aromatizador Ambiente Varetas 250ml',custo:8.90,peso:.4,cat:'Casa',img:'🕯️'},
   ];
 
   const marketplaces = ['ML','Amazon','Shopee','Magalu','TikTok'];
@@ -445,12 +445,12 @@ function switchView(el) {
 function renderView() {
   const c = document.getElementById('contentArea');
   const titles = {
-    'analytics-dashboard': 'VIMA Analytics â Dashboard',
-    'analytics-catalog': 'VIMA Analytics â CatÃ¡logos',
-    'analytics-demand': 'VIMA Analytics â AnÃ¡lise de Demanda',
-    'analytics-kits': 'VIMA Analytics â Kits Sugeridos',
-    'pricing-calc': 'VIMA Pricing â Calculadora',
-    'pricing-compare': 'VIMA Pricing â Comparativo Multi-Marketplace',
+    'analytics-dashboard': 'VIMA Analytics — Dashboard',
+    'analytics-catalog': 'VIMA Analytics — Catálogos',
+    'analytics-demand': 'VIMA Analytics — Análise de Demanda',
+    'analytics-kits': 'VIMA Analytics — Kits Sugeridos',
+    'pricing-calc': 'VIMA Pricing — Calculadora',
+    'pricing-compare': 'VIMA Pricing — Comparativo Multi-Marketplace',
     'studio': 'VIMA Studio',
   };
   document.getElementById('viewTitle').textContent = titles[state.currentView] || 'VIMA Corp';
@@ -485,13 +485,13 @@ function renderAnalyticsDashboard(c) {
   if(!state.loaded) {
     c.innerHTML = `
       <div class="upload-zone" onclick="document.getElementById('fileInput').click()" id="dropZone">
-        <div class="icon">ð</div>
-        <h3>Importe seu catÃ¡logo de fornecedor</h3>
-        <p>Arraste um arquivo PDF, XLSX ou CSV â ou clique para selecionar</p>
+        <div class="icon">📂</div>
+        <h3>Importe seu catálogo de fornecedor</h3>
+        <p>Arraste um arquivo PDF, XLSX ou CSV — ou clique para selecionar</p>
         <p class="text-xs text-muted mt-1">A IA vai extrair os produtos, cruzar com demanda real dos marketplaces e gerar seu ranking de oportunidade</p>
       </div>
       <div style="text-align:center">
-        <button class="btn btn-outline" onclick="loadDemoData()">ð¯ Carregar dados de demonstraÃ§Ã£o</button>
+        <button class="btn btn-outline" onclick="loadDemoData()">🎯 Carregar dados de demonstração</button>
       </div>
     `;
     return;
@@ -511,25 +511,25 @@ function renderAnalyticsDashboard(c) {
       <div class="kpi">
         <div class="kpi-label">Produtos Analisados</div>
         <div class="kpi-value">${totalProds}</div>
-        <div class="kpi-sub">Do catÃ¡logo importado</div>
+        <div class="kpi-sub">Do catálogo importado</div>
       </div>
       <div class="kpi">
         <div class="kpi-label">Curva A (alta demanda)</div>
         <div class="kpi-value text-green">${abcA}</div>
-        <div class="kpi-sub kpi-up">â ${Math.round(abcA/totalProds*100)}% do catÃ¡logo</div>
+        <div class="kpi-sub kpi-up">↑ ${Math.round(abcA/totalProds*100)}% do catálogo</div>
       </div>
       <div class="kpi">
-        <div class="kpi-label">Curva B (mÃ©dia)</div>
+        <div class="kpi-label">Curva B (média)</div>
         <div class="kpi-value text-orange">${abcB}</div>
-        <div class="kpi-sub">${Math.round(abcB/totalProds*100)}% do catÃ¡logo</div>
+        <div class="kpi-sub">${Math.round(abcB/totalProds*100)}% do catálogo</div>
       </div>
       <div class="kpi">
         <div class="kpi-label">Curva C (baixa)</div>
         <div class="kpi-value text-red">${abcC}</div>
-        <div class="kpi-sub">${Math.round(abcC/totalProds*100)}% do catÃ¡logo</div>
+        <div class="kpi-sub">${Math.round(abcC/totalProds*100)}% do catálogo</div>
       </div>
       <div class="kpi">
-        <div class="kpi-label">Margem MÃ©dia Projetada</div>
+        <div class="kpi-label">Margem Média Projetada</div>
         <div class="kpi-value ${avgMargin>30?'text-green':avgMargin>15?'text-orange':'text-red'}">${avgMargin.toFixed(1)}%</div>
         <div class="kpi-sub">Antes de taxas de marketplace</div>
       </div>
@@ -542,18 +542,18 @@ function renderAnalyticsDashboard(c) {
 
     <div class="chart-grid animate-in">
       <div class="chart-card">
-        <h3>ð Top 10 por Score de Oportunidade</h3>
+        <h3>🏆 Top 10 por Score de Oportunidade</h3>
         <div class="chart-bar" id="oppChart"></div>
       </div>
       <div class="chart-card">
-        <h3>ð DistribuiÃ§Ã£o por Categoria</h3>
+        <h3>📊 Distribuição por Categoria</h3>
         <div class="chart-bar" id="catChart"></div>
       </div>
     </div>
 
     <div class="table-container animate-in">
       <div class="table-toolbar">
-        <h3>ð Ranking de Oportunidade â Todos os Produtos</h3>
+        <h3>📋 Ranking de Oportunidade — Todos os Produtos</h3>
         <div class="flex gap-1 items-center">
           <div class="filters" style="margin:0">
             <span class="filter-chip ${state.filters.abc==='all'?'active':''}" onclick="setFilter('abc','all')">Todos</span>
@@ -562,7 +562,7 @@ function renderAnalyticsDashboard(c) {
             <span class="filter-chip ${state.filters.abc==='C'?'active':''}" onclick="setFilter('abc','C')">Curva C</span>
           </div>
           <div class="search-box">
-            <span>ð</span>
+            <span>🔍</span>
             <input placeholder="Buscar produto..." oninput="setFilter('search',this.value)">
           </div>
         </div>
@@ -578,8 +578,8 @@ function renderAnalyticsDashboard(c) {
               <th>Demanda</th>
               <th>Vendas 30d</th>
               <th>Marketplaces</th>
-              <th>Custo Unit. (editÃ¡vel)</th>
-              <th>PreÃ§o Sugerido</th>
+              <th>Custo Unit. (editável)</th>
+              <th>Preço Sugerido</th>
               <th>Margem Bruta</th>
               <th>Kit?</th>
             </tr>
@@ -616,7 +616,7 @@ function renderProductTable() {
       <td style="font-size:1.3rem">${p.img}</td>
       <td>
         <div class="font-bold" style="font-size:.85rem">${p.nome}</div>
-        <div class="text-xs text-muted">${p.sku} Â· ${p.cat}</div>
+        <div class="text-xs text-muted">${p.sku} · ${p.cat}</div>
       </td>
       <td>
         <div class="score-bar">
@@ -640,7 +640,7 @@ function renderProductTable() {
       </td>
       <td class="font-bold">R$ ${p.precoVenda.toFixed(2)}</td>
       <td><span class="margin-pill ${marginClass}">${margin.toFixed(1)}%</span></td>
-      <td>${p.kitSugestao ? '<span class="kit-icon" title="Kit possÃ­vel com '+p.kitSugestao+'">ð§©</span>' : 'â'}</td>
+      <td>${p.kitSugestao ? '<span class="kit-icon" title="Kit possível com '+p.kitSugestao+'">🧩</span>' : '—'}</td>
     </tr>`;
   }).join('');
 }
@@ -667,7 +667,7 @@ function renderOppChart() {
     const h = (p.opportunity / max) * 160;
     const color = p.abc === 'A' ? 'var(--green)' : p.abc === 'B' ? 'var(--orange)' : 'var(--red)';
     return `<div class="chart-bar-item" style="height:${h}px;background:${color}" title="${p.nome}">
-      <div class="tooltip">${p.nome.substring(0,25)}... â ${p.opportunity}pts</div>
+      <div class="tooltip">${p.nome.substring(0,25)}... — ${p.opportunity}pts</div>
     </div>`;
   }).join('');
 }
@@ -692,15 +692,15 @@ function renderCatChart() {
 function renderCatalog(c) {
   c.innerHTML = `
     <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
-      <div class="icon">ð</div>
-      <h3>Importar Novo CatÃ¡logo</h3>
+      <div class="icon">📂</div>
+      <h3>Importar Novo Catálogo</h3>
       <p>PDF, XLSX ou CSV de fornecedor</p>
     </div>
     ${state.loaded ? `
     <div class="table-container">
       <div class="table-toolbar">
-        <h3>CatÃ¡logo: Fornecedor Demo</h3>
-        <span class="text-sm text-muted">${state.products.length} produtos extraÃ­dos</span>
+        <h3>Catálogo: Fornecedor Demo</h3>
+        <span class="text-sm text-muted">${state.products.length} produtos extraídos</span>
       </div>
       <div style="overflow-x:auto">
         <table>
@@ -719,13 +719,13 @@ function renderCatalog(c) {
           </tbody>
         </table>
       </div>
-    </div>` : '<div class="empty-state"><div class="icon">ð</div><h3>Nenhum catÃ¡logo importado</h3><p>Importe um catÃ¡logo para comeÃ§ar a anÃ¡lise</p></div>'}
+    </div>` : '<div class="empty-state"><div class="icon">📂</div><h3>Nenhum catálogo importado</h3><p>Importe um catálogo para começar a análise</p></div>'}
   `;
 }
 
 // ---------- DEMAND VIEW ----------
 function renderDemand(c) {
-  if(!state.loaded) { c.innerHTML = '<div class="empty-state"><div class="icon">ð</div><h3>Importe um catÃ¡logo primeiro</h3></div>'; return; }
+  if(!state.loaded) { c.innerHTML = '<div class="empty-state"><div class="icon">📈</div><h3>Importe um catálogo primeiro</h3></div>'; return; }
 
   const prods = state.products;
   c.innerHTML = `
@@ -736,9 +736,9 @@ function renderDemand(c) {
         <div class="kpi-sub">Score ${prods.reduce((a,b) => a.demandScore > b.demandScore ? a : b).demandScore}/100</div>
       </div>
       <div class="kpi">
-        <div class="kpi-label">Menor CompetiÃ§Ã£o</div>
+        <div class="kpi-label">Menor Competição</div>
         <div class="kpi-value text-cyan">${prods.reduce((a,b) => a.competicao < b.competicao ? a : b).nome.substring(0,20)}...</div>
-        <div class="kpi-sub">CompetiÃ§Ã£o ${prods.reduce((a,b) => a.competicao < b.competicao ? a : b).competicao}/100</div>
+        <div class="kpi-sub">Competição ${prods.reduce((a,b) => a.competicao < b.competicao ? a : b).competicao}/100</div>
       </div>
       <div class="kpi">
         <div class="kpi-label">Melhor Margem</div>
@@ -747,16 +747,16 @@ function renderDemand(c) {
     </div>
     <div class="table-container animate-in">
       <div class="table-toolbar">
-        <h3>ð AnÃ¡lise de Demanda por Marketplace</h3>
+        <h3>📊 Análise de Demanda por Marketplace</h3>
       </div>
       <div style="overflow-x:auto">
         <table>
-          <thead><tr><th>Produto</th><th>Demanda</th><th>CompetiÃ§Ã£o</th><th>Vendas 7d</th><th>Vendas 30d</th><th>Ticket MÃ©dio</th><th>TendÃªncia</th></tr></thead>
+          <thead><tr><th>Produto</th><th>Demanda</th><th>Competição</th><th>Vendas 7d</th><th>Vendas 30d</th><th>Ticket Médio</th><th>Tendência</th></tr></thead>
           <tbody>
             ${prods.sort((a,b) => b.demandScore - a.demandScore).map(p => {
               const ticket = p.precoVenda;
-              const trend = p.vendas7d > (p.vendas30d/4) ? 'â' : p.vendas7d < (p.vendas30d/5) ? 'â' : 'â';
-              const trendClass = trend === 'â' ? 'text-green' : trend === 'â' ? 'text-red' : 'text-orange';
+              const trend = p.vendas7d > (p.vendas30d/4) ? '↑' : p.vendas7d < (p.vendas30d/5) ? '↓' : '→';
+              const trendClass = trend === '↑' ? 'text-green' : trend === '↓' ? 'text-red' : 'text-orange';
               return `<tr>
                 <td><span class="font-bold">${p.img} ${p.nome.substring(0,35)}</span><br><span class="text-xs text-muted">${p.sku}</span></td>
                 <td><div class="demand-bar" style="width:120px"><div class="demand-fill" style="width:${p.demandScore}%;background:${p.demandScore>70?'var(--green)':'var(--orange)'}"></div></div> ${p.demandScore}</td>
@@ -776,11 +776,11 @@ function renderDemand(c) {
 
 // ---------- KITS VIEW ----------
 function renderKits(c) {
-  if(!state.loaded) { c.innerHTML = '<div class="empty-state"><div class="icon">ð§©</div><h3>Importe um catÃ¡logo primeiro</h3></div>'; return; }
+  if(!state.loaded) { c.innerHTML = '<div class="empty-state"><div class="icon">🧩</div><h3>Importe um catálogo primeiro</h3></div>'; return; }
 
   const kits = [
     {nome:'Kit Cozinha Completa',produtos:['PAN-002','JGF-010','ORG-008','TBR-016'],desconto:12,demandBoost:25},
-    {nome:'Kit OrganizaÃ§Ã£o Total',produtos:['GAV-001','CXO-003','CJG-019'],desconto:8,demandBoost:18},
+    {nome:'Kit Organização Total',produtos:['GAV-001','CXO-003','CJG-019'],desconto:8,demandBoost:18},
     {nome:'Kit Jardim Vivo',produtos:['VAS-006','CSP-013'],desconto:10,demandBoost:15},
     {nome:'Kit Casa Aroma + Luz',produtos:['ARM-020','LMP-007'],desconto:15,demandBoost:30},
   ];
@@ -792,11 +792,11 @@ function renderKits(c) {
         <div class="kpi-value">${kits.length}</div>
       </div>
       <div class="kpi">
-        <div class="kpi-label">Aumento MÃ©dio de Demanda</div>
+        <div class="kpi-label">Aumento Médio de Demanda</div>
         <div class="kpi-value text-green">+${Math.round(kits.reduce((s,k)=>s+k.demandBoost,0)/kits.length)}%</div>
       </div>
       <div class="kpi">
-        <div class="kpi-label">Ticket MÃ©dio do Kit</div>
+        <div class="kpi-label">Ticket Médio do Kit</div>
         <div class="kpi-value">R$ ${(kits.reduce((s,k) => s + k.produtos.reduce((ss,sku) => {const p=state.products.find(x=>x.sku===sku);return ss+(p?p.precoVenda:0)},0),0) / kits.length).toFixed(2)}</div>
       </div>
     </div>
@@ -811,7 +811,7 @@ function renderKits(c) {
         return `
         <div class="mp-card">
           <div class="mp-card-header">
-            <h4>ð§© ${k.nome}</h4>
+            <h4>🧩 ${k.nome}</h4>
             <span class="tag tag-new">+${k.demandBoost}% demanda</span>
           </div>
           <div class="mp-card-body">
@@ -828,7 +828,7 @@ function renderKits(c) {
           </div>
           <div class="mp-card-footer">
             <div>
-              <div class="profit-label">PreÃ§o Kit</div>
+              <div class="profit-label">Preço Kit</div>
               <div class="profit-value">R$ ${precoKit.toFixed(2)}</div>
             </div>
             <span class="margin-pill ${margin>25?'margin-good':'margin-ok'}">${margin.toFixed(1)}% margem</span>
@@ -847,11 +847,11 @@ function renderPricingCalc(c) {
         <h3 style="margin-bottom:1.2rem;font-size:1.05rem">Dados do Produto</h3>
         <div class="form-group">
           <label>Nome do Produto</label>
-          <input class="form-input" id="pNome" placeholder="Ex: Jogo de Panelas 5 PeÃ§as" value="${state.pricing.nome}" oninput="state.pricing.nome=this.value;calcPricing()">
+          <input class="form-input" id="pNome" placeholder="Ex: Jogo de Panelas 5 Peças" value="${state.pricing.nome}" oninput="state.pricing.nome=this.value;calcPricing()">
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Custo UnitÃ¡rio (R$)</label>
+            <label>Custo Unitário (R$)</label>
             <input class="form-input" type="number" id="pCusto" step="0.01" value="${state.pricing.custoUnit||''}" oninput="state.pricing.custoUnit=+this.value;calcPricing()">
           </div>
           <div class="form-group">
@@ -874,13 +874,13 @@ function renderPricingCalc(c) {
           <input class="form-input" type="number" id="pFrete" step="0.01" value="${state.pricing.freteVendedor||''}" oninput="state.pricing.freteVendedor=+this.value;calcPricing()">
         </div>
         <div class="form-group mt-2">
-          <label>PreÃ§o de Venda Desejado (R$)</label>
+          <label>Preço de Venda Desejado (R$)</label>
           <input class="form-input" type="number" id="pPreco" step="0.01" style="font-size:1.2rem;font-weight:700" oninput="calcPricing()">
         </div>
       </div>
 
       <div>
-        <h3 style="margin-bottom:1rem;font-size:1.05rem">âï¸ Comparativo por Marketplace</h3>
+        <h3 style="margin-bottom:1rem;font-size:1.05rem">⚖️ Comparativo por Marketplace</h3>
         <div class="mp-compare" id="pricingCards"></div>
       </div>
     </div>
@@ -898,9 +898,9 @@ function calcPricing() {
   const custoBase = (p.custoUnit * p.kitQtd) + p.embalagem;
 
   const marketplaces = [
-    {nome:'Mercado Livre',tag:'ClÃ¡ssico',comissao:12,taxaFixa:6,cor:'#ffd600',full:false},
+    {nome:'Mercado Livre',tag:'Clássico',comissao:12,taxaFixa:6,cor:'#ffd600',full:false},
     {nome:'Mercado Livre',tag:'Premium',comissao:17,taxaFixa:6,cor:'#ffd600',full:true},
-    {nome:'Amazon',tag:'PadrÃ£o',comissao:15,taxaFixa:0,cor:'#ff9900',full:false},
+    {nome:'Amazon',tag:'Padrão',comissao:15,taxaFixa:0,cor:'#ff9900',full:false},
     {nome:'Shopee',tag:'CNPJ',comissao:14,taxaFixa:0,cor:'#ee4d2d',full:false,antecipacao:2},
     {nome:'Magalu',tag:'Marketplace',comissao:16,taxaFixa:0,cor:'#0086d1',full:false},
     {nome:'TikTok Shop',tag:'',comissao:8,taxaFixa:0,cor:'#fff',full:false},
@@ -923,17 +923,17 @@ function calcPricing() {
         <span class="text-xs text-muted">${mp.tag}</span>
       </div>
       <div class="mp-card-body">
-        <div class="mp-row"><span class="label">PreÃ§o Venda</span><span class="value">R$ ${preco.toFixed(2)}</span></div>
+        <div class="mp-row"><span class="label">Preço Venda</span><span class="value">R$ ${preco.toFixed(2)}</span></div>
         <div class="mp-row"><span class="label">Custo Produto</span><span class="value text-red">-R$ ${custoBase.toFixed(2)}</span></div>
-        <div class="mp-row"><span class="label">ComissÃ£o (${mp.comissao}%)</span><span class="value text-red">-R$ ${comissaoR.toFixed(2)}</span></div>
+        <div class="mp-row"><span class="label">Comissão (${mp.comissao}%)</span><span class="value text-red">-R$ ${comissaoR.toFixed(2)}</span></div>
         ${taxaFixaR > 0 ? `<div class="mp-row"><span class="label">Taxa Fixa</span><span class="value text-red">-R$ ${taxaFixaR.toFixed(2)}</span></div>` : ''}
         <div class="mp-row"><span class="label">Imposto (${p.imposto}%)</span><span class="value text-red">-R$ ${impostoR.toFixed(2)}</span></div>
-        ${antecipacaoR > 0 ? `<div class="mp-row"><span class="label">AntecipaÃ§Ã£o (${mp.antecipacao}%)</span><span class="value text-red">-R$ ${antecipacaoR.toFixed(2)}</span></div>` : ''}
+        ${antecipacaoR > 0 ? `<div class="mp-row"><span class="label">Antecipação (${mp.antecipacao}%)</span><span class="value text-red">-R$ ${antecipacaoR.toFixed(2)}</span></div>` : ''}
         ${freteR > 0 ? `<div class="mp-row"><span class="label">Frete Vendedor</span><span class="value text-red">-R$ ${freteR.toFixed(2)}</span></div>` : ''}
       </div>
       <div class="mp-card-footer" style="border-left:4px solid ${margem > 20 ? 'var(--green)' : margem > 0 ? 'var(--orange)' : 'var(--red)'}">
         <div>
-          <div class="profit-label">Lucro LÃ­quido</div>
+          <div class="profit-label">Lucro Líquido</div>
           <div class="profit-value ${lucro >= 0 ? 'text-green' : 'text-red'}">R$ ${lucro.toFixed(2)}</div>
         </div>
         <span class="margin-pill ${margem > 20 ? 'margin-good' : margem > 0 ? 'margin-ok' : 'margin-bad'}">${margem.toFixed(1)}%</span>
@@ -947,8 +947,8 @@ function renderPricingCompare(c) {
   if(!state.loaded) {
     c.innerHTML = `
       <div class="empty-state">
-        <div class="icon">âï¸</div>
-        <h3>Importe um catÃ¡logo para ver o comparativo automÃ¡tico</h3>
+        <div class="icon">⚖️</div>
+        <h3>Importe um catálogo para ver o comparativo automático</h3>
         <p class="text-muted">Ou use a Calculadora para simular manualmente</p>
         <button class="btn btn-outline mt-2" onclick="loadDemoData()">Carregar Demo</button>
       </div>`;
@@ -956,7 +956,7 @@ function renderPricingCompare(c) {
   }
 
   c.innerHTML = `
-    <p class="text-muted mb-2">Comparativo de margem lÃ­quida por marketplace para cada produto do catÃ¡logo. Os valores consideram as taxas reais de cada plataforma.</p>
+    <p class="text-muted mb-2">Comparativo de margem líquida por marketplace para cada produto do catálogo. Os valores consideram as taxas reais de cada plataforma.</p>
     <div class="table-container animate-in">
       <div style="overflow-x:auto">
         <table>
@@ -964,8 +964,8 @@ function renderPricingCompare(c) {
             <tr>
               <th>Produto</th>
               <th>Custo</th>
-              <th>PreÃ§o</th>
-              <th style="background:rgba(255,214,0,.08)">ML ClÃ¡ssico</th>
+              <th>Preço</th>
+              <th style="background:rgba(255,214,0,.08)">ML Clássico</th>
               <th style="background:rgba(255,214,0,.08)">ML Premium</th>
               <th style="background:rgba(255,153,0,.08)">Amazon</th>
               <th style="background:rgba(238,77,45,.08)">Shopee</th>
@@ -1009,10 +1009,10 @@ function renderPricingCompare(c) {
 function renderStudio(c) {
   c.innerHTML = `
     <div class="empty-state">
-      <div class="icon">ð¨</div>
+      <div class="icon">🎨</div>
       <h3>VIMA Studio</h3>
-      <p class="text-muted">MÃ³dulo em desenvolvimento. GeraÃ§Ã£o automÃ¡tica de carrosseis criativos com IA.</p>
-      <span class="tag tag-beta mt-1">BETA â Em breve</span>
+      <p class="text-muted">Módulo em desenvolvimento. Geração automática de carrosseis criativos com IA.</p>
+      <span class="tag tag-beta mt-1">BETA — Em breve</span>
     </div>
   `;
 }
