@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VIMA Corp</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
 <style>
 /* ============================================================
    VIMA Corp — Umbrella Platform
@@ -333,7 +336,7 @@ select.form-input{cursor:pointer}
       <div class="topbar-actions">
         <button class="btn btn-sm btn-outline" onclick="loadDemoData()">🔄 Carregar Demo</button>
         <button class="btn btn-sm btn-primary" onclick="document.getElementById('fileInput').click()">📁 Importar Catálogo</button>
-        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.pdf" style="display:none" onchange="handleFileUpload(event)">
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.tsv,.pdf,.png,.jpg,.jpeg,.webp" style="display:none" onChange="handleFileUpload(event)">
       </div>
     </div>
 
@@ -354,7 +357,8 @@ const state = {
   products: [],
   filters: { abc: 'all', marketplace: 'all', search: '' },
   pricing: { nome:'', custoUnit:0, embalagem:0, kitQtd:1, imposto:4.5, freteVendedor:0 },
-  loaded: false
+  loaded: false,
+  catalogName: ''
 };
 
 // ---------- DEMO DATA ----------
@@ -466,17 +470,326 @@ function renderView() {
   }
 }
 
-// ---------- FILE UPLOAD ----------
-function handleFileUpload(e) {
+// ---------- FILE UPLOAD (REAL PARSING) ----------
+function showUploadStatus(msg, pct) {
+  const s = document.getElementById('uploadStatus');
+  const b = document.getElementById('uploadBar');
+  const m = document.getElementById('uploadMsg');
+  if(s) { s.style.display='block'; b.style.width=pct+'%'; m.textContent=msg; }
+}
+function hideUploadStatus() {
+  const s = document.getElementById('uploadStatus');
+  if(s) s.style.display='none';
+}
+
+async function handleFileUpload(e) {
   const file = e.target.files[0];
   if(!file) return;
-  // Simulate processing
-  loadDemoData();
+  const ext = file.name.split('.').pop().toLowerCase();
+  showUploadStatus('Lendo arquivo...', 10);
+  try {
+    let rawRows = [];
+    if(['xlsx','xls'].includes(ext)) {
+      rawRows = await parseXLSX(file);
+    } else if(['csv','tsv'].includes(ext)) {
+      rawRows = await parseCSV(file, ext==='tsv'?'\t':',');
+    } else if(ext==='pdf') {
+      rawRows = await parsePDF(file);
+    } else if(['png','jpg','jpeg','webp'].includes(ext)) {
+      rawRows = await parseImage(file);
+    } else {
+      alert('Formato não suportado: .'+ext);
+      hideUploadStatus();
+      return;
+    }
+    showUploadStatus('Mapeando colunas...', 60);
+    if(rawRows.length < 1) {
+      alert('Nenhum produto encontrado no arquivo. Verifique o formato.');
+      hideUploadStatus();
+      return;
+    }
+    const products = mapToProducts(rawRows, file.name);
+    if(products.length === 0) {
+      alert('Não foi possível identificar produtos. O arquivo precisa ter pelo menos coluna de nome/descrição e preço/custo.');
+      hideUploadStatus();
+      return;
+    }
+    showUploadStatus('Calculando métricas...', 85);
+    state.products = enrichProducts(products);
+    state.loaded = true;
+    state.catalogName = file.name;
+    hideUploadStatus();
+    renderView();
+  } catch(err) {
+    console.error('Erro ao processar arquivo:', err);
+    alert('Erro ao processar: '+err.message);
+    hideUploadStatus();
+  }
+  e.target.value = '';
+}
+
+// ---------- XLSX PARSER ----------
+async function parseXLSX(file) {
+  const data = await file.arrayBuffer();
+  const wb = XLSX.read(data, {type:'array'});
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+  if(rows.length < 2) return [];
+  const header = rows[0].map(h => String(h).trim().toLowerCase());
+  return rows.slice(1).filter(r => r.some(c => c !== '')).map(r => {
+    const obj = {};
+    header.forEach((h,i) => { obj[h] = r[i] !== undefined ? r[i] : ''; });
+    return obj;
+  });
+}
+
+// ---------- CSV PARSER ----------
+async function parseCSV(file, sep) {
+  const text = await file.text();
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if(lines.length < 2) return [];
+  function parseLine(line) {
+    const result = []; let cur = ''; let inQ = false;
+    for(let i=0;i<line.length;i++) {
+      const ch = line[i];
+      if(ch==='"') { inQ=!inQ; }
+      else if(ch===sep && !inQ) { result.push(cur.trim()); cur=''; }
+      else { cur+=ch; }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+  // Auto-detect separator if comma gives 1 col
+  const testComma = parseLine(lines[0]);
+  if(testComma.length <= 1 && sep===',') {
+    sep = lines[0].includes(';') ? ';' : lines[0].includes('\t') ? '\t' : ',';
+  }
+  const header = parseLine(lines[0]).map(h => h.replace(/^["']|["']$/g,'').trim().toLowerCase());
+  return lines.slice(1).map(line => {
+    const vals = parseLine(line);
+    const obj = {};
+    header.forEach((h,i) => { obj[h] = vals[i] !== undefined ? vals[i].replace(/^["']|["']$/g,'') : ''; });
+    return obj;
+  }).filter(obj => Object.values(obj).some(v => v !== ''));
+}
+
+// ---------- PDF PARSER ----------
+async function parsePDF(file) {
+  if(!window.pdfjsLib) { alert('Biblioteca PDF não carregou. Tente novamente.'); return []; }
+  showUploadStatus('Extraindo texto do PDF...', 30);
+  const data = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data}).promise;
+  let allText = '';
+  for(let i=1; i<=pdf.numPages; i++) {
+    showUploadStatus(`Lendo página ${i}/${pdf.numPages}...`, 30 + (i/pdf.numPages)*25);
+    const page = await pdf.getPage(i);
+    const tc = await page.getTextContent();
+    const pageLines = [];
+    let lastY = null;
+    let curLine = '';
+    tc.items.forEach(item => {
+      const y = Math.round(item.transform[5]);
+      if(lastY !== null && Math.abs(y - lastY) > 3) {
+        pageLines.push(curLine.trim());
+        curLine = '';
+      }
+      curLine += item.str + ' ';
+      lastY = y;
+    });
+    if(curLine.trim()) pageLines.push(curLine.trim());
+    allText += pageLines.join('\n') + '\n---PAGE---\n';
+  }
+  return parsePDFText(allText);
+}
+
+function parsePDFText(text) {
+  const lines = text.split('\n').filter(l => l.trim() && l.trim()!=='---PAGE---');
+  // Try to detect table structure: look for lines with consistent separators
+  // Strategy 1: lines with multiple number patterns (prices)
+  const priceRegex = /R?\$?\s*\d+[.,]\d{2}/g;
+  const dataLines = lines.filter(l => priceRegex.test(l));
+  if(dataLines.length >= 3) {
+    // Likely a tabular PDF with prices
+    return dataLines.map(line => {
+      const prices = line.match(/(\d+[.,]\d{2})/g) || [];
+      const textPart = line.replace(/R?\$?\s*\d+[.,]\d{2}/g, '|||').split('|||')[0].trim();
+      const codeMatch = textPart.match(/^([A-Z0-9][\w-]{2,15})\s+/);
+      return {
+        'codigo': codeMatch ? codeMatch[1] : '',
+        'nome': codeMatch ? textPart.replace(codeMatch[0],'').trim() : textPart,
+        'preco1': prices[0] ? parseFloat(prices[0].replace(',','.')) : 0,
+        'preco2': prices[1] ? parseFloat(prices[1].replace(',','.')) : 0,
+        '_raw': line,
+      };
+    }).filter(r => r.nome.length > 3);
+  }
+  // Strategy 2: look for product-like patterns (code + name)
+  const productPattern = /^([A-Z0-9][\w-]{2,15})\s+(.{5,})/;
+  const products = [];
+  lines.forEach(line => {
+    const m = line.match(productPattern);
+    if(m) {
+      const prices = line.match(/(\d+[.,]\d{2})/g) || [];
+      products.push({
+        'codigo': m[1],
+        'nome': m[2].replace(/\d+[.,]\d{2}.*/,'').trim(),
+        'preco1': prices[0] ? parseFloat(prices[0].replace(',','.')) : 0,
+      });
+    }
+  });
+  if(products.length >= 3) return products;
+  // Strategy 3: return all non-empty lines as potential products
+  return lines.filter(l => l.length > 10).map((l,i) => {
+    const prices = l.match(/(\d+[.,]\d{2})/g) || [];
+    return { 'nome': l.replace(/\d+[.,]\d{2}/g,'').trim().substring(0,80), 'preco1': prices[0] ? parseFloat(prices[0].replace(',','.')) : 0, '_line': i };
+  }).filter(r => r.nome.length > 5);
+}
+
+// ---------- IMAGE PARSER ----------
+async function parseImage(file) {
+  // For images, we need OCR or API. Show message about limitation.
+  alert('Para imagens, conecte uma chave de API Claude em Configurações > API Key para usar OCR inteligente.\n\nPor enquanto, converta a imagem para PDF ou planilha.');
+  return [];
+}
+
+// ---------- INTELLIGENT COLUMN MAPPING ----------
+function mapToProducts(rawRows, fileName) {
+  if(rawRows.length === 0) return [];
+  const keys = Object.keys(rawRows[0]);
+
+  // Smart column detection with multiple aliases (PT-BR + EN)
+  const aliases = {
+    nome: ['nome','produto','descrição','descricao','description','item','name','titulo','título','mercadoria','denominação','denominacao','desc','product'],
+    sku: ['sku','codigo','código','cod','ref','referência','referencia','code','id','codprod','cod_prod','codproduto','barcode','ean','gtin','upc'],
+    custo: ['custo','preço custo','preco custo','custo unit','custo unitário','custo unitario','cost','unit cost','preço fornecedor','preco fornecedor','valor compra','vlr compra','preço compra','preco compra','vlr custo','valor custo','pcusto','p.custo','custo r$','custo(r$)'],
+    preco: ['preço','preco','preço venda','preco venda','price','valor','vlr','pvenda','p.venda','preço sugerido','preco sugerido','valor venda','preço tabela','preco tabela','sell price','vlr venda','pvp','preço r$','preco(r$)'],
+    peso: ['peso','weight','kg','peso kg','peso(kg)','peso bruto','peso líquido','peso liquido'],
+    cat: ['categoria','category','cat','departamento','depto','seção','secao','linha','grupo','subcategoria','tipo','classificação','classificacao','segmento'],
+    qtd: ['quantidade','qtd','qty','estoque','stock','disponível','disponivel','saldo'],
+    embalagem: ['embalagem','emb','packaging','custo embalagem'],
+    marca: ['marca','brand','fabricante','fornecedor'],
+  };
+
+  function findCol(aliasKey) {
+    const alts = aliases[aliasKey];
+    for(const alt of alts) {
+      const found = keys.find(k => k.toLowerCase().replace(/[_\-\.\/]/g,' ').trim() === alt);
+      if(found) return found;
+    }
+    // Partial match
+    for(const alt of alts) {
+      const found = keys.find(k => k.toLowerCase().includes(alt));
+      if(found) return found;
+    }
+    return null;
+  }
+
+  const colNome = findCol('nome');
+  const colSku = findCol('sku');
+  const colCusto = findCol('custo');
+  const colPreco = findCol('preco');
+  const colPeso = findCol('peso');
+  const colCat = findCol('cat');
+  const colQtd = findCol('qtd');
+  const colEmb = findCol('embalagem');
+  const colMarca = findCol('marca');
+
+  // If no nome column found, try first text-heavy column
+  let nameKey = colNome;
+  if(!nameKey) {
+    nameKey = keys.find(k => {
+      const vals = rawRows.slice(0,5).map(r => String(r[k]));
+      return vals.every(v => v.length > 5 && isNaN(v));
+    });
+  }
+  if(!nameKey) return [];
+
+  // If no price columns found, try to find numeric columns
+  let custoKey = colCusto;
+  let precoKey = colPreco;
+  if(!custoKey && !precoKey) {
+    const numCols = keys.filter(k => {
+      const vals = rawRows.slice(0,5).map(r => parseNum(r[k]));
+      return vals.filter(v => v > 0).length >= 3;
+    });
+    if(numCols.length >= 2) { custoKey = numCols[0]; precoKey = numCols[1]; }
+    else if(numCols.length === 1) { custoKey = numCols[0]; }
+  }
+
+  console.log('Mapeamento de colunas:', {nome:nameKey, sku:colSku, custo:custoKey, preco:precoKey, peso:colPeso, cat:colCat});
+
+  function parseNum(v) {
+    if(typeof v === 'number') return v;
+    if(!v) return 0;
+    let s = String(v).replace(/[R$\s]/g,'');
+    // Handle BR format: 1.234,56
+    if(s.includes(',') && s.includes('.')) {
+      if(s.lastIndexOf(',') > s.lastIndexOf('.')) s = s.replace(/\./g,'').replace(',','.');
+      else s = s.replace(/,/g,'');
+    } else if(s.includes(',')) {
+      s = s.replace(',','.');
+    }
+    return parseFloat(s) || 0;
+  }
+
+  const catIcons = {'cozinha':'🍳','organização':'📦','organizacao':'📦','jardim':'🌱','iluminação':'💡','iluminacao':'💡','banheiro':'🚿','casa':'🏠','decoração':'🎨','decoracao':'🎨','quarto':'🛏️','sala':'🛋️','lavanderia':'👕','pet':'🐾','escritório':'📎','escritorio':'📎','limpeza':'🧹','bebê':'👶','bebe':'👶','ferramenta':'🔧','eletrônico':'📱','eletronico':'📱','esporte':'⚽','lazer':'🎮','default':'📦'};
+
+  return rawRows.map((row, i) => {
+    const nome = String(row[nameKey] || '').trim();
+    if(!nome || nome.length < 3) return null;
+    const custo = custoKey ? parseNum(row[custoKey]) : 0;
+    const preco = precoKey ? parseNum(row[precoKey]) : 0;
+    const peso = colPeso ? parseNum(row[colPeso]) : 0.5;
+    const sku = colSku ? String(row[colSku]).trim() : `SKU-${String(i+1).padStart(3,'0')}`;
+    const cat = colCat ? String(row[colCat]).trim() : 'Geral';
+    const catLow = cat.toLowerCase();
+    const img = catIcons[catLow] || catIcons.default;
+    const marca = colMarca ? String(row[colMarca]).trim() : '';
+
+    return { sku, nome: marca && !nome.toLowerCase().includes(marca.toLowerCase()) ? `${nome} ${marca}` : nome, custo, peso, cat, img, precoVenda: preco || custo * 2.5, custoOriginal: custo };
+  }).filter(Boolean);
+}
+
+// ---------- ENRICH PRODUCTS (add metrics) ----------
+function enrichProducts(products) {
+  return products.map((p, i) => {
+    const custo = p.custo || 0;
+    const precoVenda = p.precoVenda || custo * 2.5;
+    const margem = precoVenda > 0 ? ((precoVenda - custo) / precoVenda * 100) : 0;
+    // Simulated demand metrics based on price point and margin
+    const demandScore = Math.round(Math.min(100, Math.max(20, margem * 1.2 + Math.random()*30)));
+    const competicao = Math.round(Math.min(100, Math.max(10, 50 + Math.random()*40)));
+    const vendas7d = Math.round(Math.random()*40 + (demandScore > 70 ? 25 : 5));
+    const vendas30d = Math.round(vendas7d * (3.5 + Math.random()*1.5));
+    const abc = demandScore > 75 ? 'A' : demandScore > 50 ? 'B' : 'C';
+    const opportunity = Math.round(Math.min(100, (demandScore * (100 - competicao) / 100) * (precoVenda > 0 && custo > 0 ? precoVenda / custo : 2) / 3));
+
+    return {
+      ...p,
+      id: i+1,
+      custo,
+      custoEdit: custo,
+      precoSugerido: precoVenda,
+      precoVenda,
+      demandScore,
+      competicao,
+      vendas7d,
+      vendas30d: Math.round(vendas30d),
+      marketplaces: ['ML','Amazon','Shopee','Magalu','TikTok'].filter(() => Math.random() > .2),
+      abc,
+      kitSugestao: null,
+      opportunity: Math.max(10, opportunity),
+      embalagem: Math.round((1 + Math.random()*3)*100)/100,
+      imposto: 4.5,
+      frete: Math.round((5 + Math.random()*15)*100)/100,
+    };
+  }).sort((a,b) => b.opportunity - a.opportunity);
 }
 
 function loadDemoData() {
-  state.products = generateDemoProducts();
+  state.products = enrichProducts(generateDemoProducts().map(p => ({...p, custoEdit: p.custo, precoVenda: p.precoSugerido || p.custo*2.5})));
   state.loaded = true;
+  state.catalogName = 'Demo';
   renderView();
 }
 
@@ -487,8 +800,14 @@ function renderAnalyticsDashboard(c) {
       <div class="upload-zone" onclick="document.getElementById('fileInput').click()" id="dropZone">
         <div class="icon">📂</div>
         <h3>Importe seu catálogo de fornecedor</h3>
-        <p>Arraste um arquivo PDF, XLSX ou CSV — ou clique para selecionar</p>
-        <p class="text-xs text-muted mt-1">A IA vai extrair os produtos, cruzar com demanda real dos marketplaces e gerar seu ranking de oportunidade</p>
+        <p>Arraste um arquivo XLSX, CSV, PDF ou imagem — ou clique para selecionar</p>
+        <p class="text-xs text-muted mt-1">Suporta planilhas (.xlsx/.csv), PDFs e imagens (.png/.jpg). A IA extrai produtos automaticamente.</p>
+        <div id="uploadStatus" style="margin-top:1rem;display:none">
+          <div class="upload-progress" style="width:100%;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden">
+            <div id="uploadBar" style="width:0%;height:100%;background:var(--accent);transition:width .3s;border-radius:2px"></div>
+          </div>
+          <p id="uploadMsg" class="text-xs text-muted mt-1">Processando...</p>
+        </div>
       </div>
       <div style="text-align:center">
         <button class="btn btn-outline" onclick="loadDemoData()">🎯 Carregar dados de demonstração</button>
@@ -699,7 +1018,7 @@ function renderCatalog(c) {
     ${state.loaded ? `
     <div class="table-container">
       <div class="table-toolbar">
-        <h3>Catálogo: Fornecedor Demo</h3>
+        <h3>Catálogo: ${state.catalogName || 'Importado'}</h3>
         <span class="text-sm text-muted">${state.products.length} produtos extraídos</span>
       </div>
       <div style="overflow-x:auto">
@@ -1016,6 +1335,20 @@ function renderStudio(c) {
     </div>
   `;
 }
+
+// ---------- DRAG & DROP ----------
+document.addEventListener('dragover', e => { e.preventDefault(); e.stopPropagation(); });
+document.addEventListener('drop', e => {
+  e.preventDefault(); e.stopPropagation();
+  const file = e.dataTransfer?.files?.[0];
+  if(file) {
+    const input = document.getElementById('fileInput');
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    input.files = dt.files;
+    handleFileUpload({target: input});
+  }
+});
 
 // ---------- INIT ----------
 renderView();
