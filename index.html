@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIMA Corp</title>
+<style>
+/* ============================================================
+   VIMA Corp â Umbrella Platform
+   Analytics Â· Pricing Â· Studio
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg: #0b0f1a;
+  --bg2: #111827;
+  --bg3: #1e293b;
+  --bg4: #283548;
+  --accent: #6366f1;
+  --accent2: #818cf8;
+  --accent3: #4f46e5;
+  --green: #22c55e;
+  --green2: #16a34a;
+  --red: #ef4444;
+  --orange: #f59e0b;
+  --yellow: #eab308;
+  --blue: #3b82f6;
+  --cyan: #06b6d4;
+  --pink: #ec4899;
+  --txt: #f1f5f9;
+  --txt2: #94a3b8;
+  --txt3: #64748b;
+  --border: #334155;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+
+html{font-size:14px}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+/* ---------- LANDING PAGE ---------- */
+.landing{min-height:100vh;display:flex;flex-direction:column}
+.landing-nav{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 3rem;border-bottom:1px solid var(--border);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;background:rgba(11,15,26,.85)}
+.logo{font-size:1.6rem;font-weight:800;letter-spacing:-.5px}
+.logo span{color:var(--accent2)}
+.nav-links{display:flex;gap:2rem;align-items:center}
+.nav-links a{color:var(--txt2);text-decoration:none;font-weight:500;transition:.2s}
+.nav-links a:hover{color:var(--txt)}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.4rem;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;border:none;transition:.2s;text-decoration:none}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent3);transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--accent2);border:1.5px solid var(--accent)}
+.btn-outline:hover{background:var(--accent);color:#fff}
+.btn-ghost{background:transparent;color:var(--txt2)}
+.btn-ghost:hover{color:var(--txt)}
+.btn-sm{padding:.45rem 1rem;font-size:.8rem}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:var(--green2)}
+
+.hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 50% 50%,rgba(99,102,241,.08) 0%,transparent 60%);pointer-events:none}
+.hero h1{font-size:3.8rem;font-weight:900;line-height:1.08;letter-spacing:-1.5px;max-width:800px;margin-bottom:1.2rem}
+.hero h1 .grad{background:linear-gradient(135deg,var(--accent2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:1.2rem;color:var(--txt2);max-width:560px;line-height:1.6;margin-bottom:2.5rem}
+.hero-cta{display:flex;gap:1rem}
+
+.modules{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;padding:0 3rem 5rem;max-width:1100px;margin:0 auto;width:100%}
+.module-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;transition:.3s;cursor:pointer;position:relative;overflow:hidden}
+.module-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:var(--shadow)}
+.module-card .icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1rem}
+.module-card h3{font-size:1.15rem;font-weight:700;margin-bottom:.5rem}
+.module-card p{color:var(--txt2);font-size:.88rem;line-height:1.5}
+.mc-analytics .icon{background:rgba(99,102,241,.15);color:var(--accent2)}
+.mc-pricing .icon{background:rgba(34,197,94,.15);color:var(--green)}
+.mc-studio .icon{background:rgba(236,72,153,.15);color:var(--pink)}
+.tag{display:inline-block;padding:.2rem .6rem;border-radius:20px;font-size:.7rem;font-weight:600;margin-top:.8rem}
+.tag-new{background:rgba(34,197,94,.15);color:var(--green)}
+.tag-soon{background:rgba(245,158,11,.15);color:var(--orange)}
+.tag-beta{background:rgba(99,102,241,.15);color:var(--accent2)}
+
+/* ---------- APP SHELL ---------- */
+.app{display:none;min-height:100vh}
+.app.active{display:flex}
+.sidebar{width:240px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50}
+.sidebar-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.8rem}
+.sidebar-header .logo{font-size:1.2rem}
+.sidebar-nav{flex:1;padding:.8rem;overflow-y:auto}
+.nav-section{margin-bottom:1.2rem}
+.nav-section-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);padding:.5rem .8rem;margin-bottom:.2rem}
+.nav-item{display:flex;align-items:center;gap:.7rem;padding:.6rem .8rem;border-radius:8px;color:var(--txt2);font-size:.88rem;font-weight:500;cursor:pointer;transition:.15s;text-decoration:none}
+.nav-item:hover{background:var(--bg3);color:var(--txt)}
+.nav-item.active{background:var(--accent);color:#fff}
+.nav-item .nav-icon{width:20px;text-align:center;font-size:.95rem}
+.sidebar-footer{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:.8rem}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;color:#fff}
+.sidebar-footer .user-name{font-size:.85rem;font-weight:600}
+.sidebar-footer .user-plan{font-size:.7rem;color:var(--txt3)}
+
+.main{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:.8rem 2rem;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:40}
+.topbar h2{font-size:1.1rem;font-weight:700}
+.topbar-actions{display:flex;gap:.8rem;align-items:center}
+
+.content{flex:1;padding:2rem;overflow-y:auto}
+
+/* ---------- UPLOAD ZONE ---------- */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:3rem;text-align:center;transition:.3s;cursor:pointer;margin-bottom:2rem;background:var(--bg2)}
+.upload-zone:hover{border-color:var(--accent);background:rgba(99,102,241,.04)}
+.upload-zone.dragover{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.upload-zone .icon{font-size:2.5rem;margin-bottom:.8rem;color:var(--accent2)}
+.upload-zone h3{font-size:1.1rem;margin-bottom:.4rem}
+.upload-zone p{color:var(--txt2);font-size:.85rem}
+
+/* ---------- KPI CARDS ---------- */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem 1.5rem;transition:.2s}
+.kpi:hover{border-color:var(--accent)}
+.kpi-label{font-size:.75rem;color:var(--txt3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem}
+.kpi-value{font-size:1.8rem;font-weight:800;letter-spacing:-.5px}
+.kpi-sub{font-size:.78rem;color:var(--txt2);margin-top:.2rem;display:flex;align-items:center;gap:.3rem}
+.kpi-up{color:var(--green)}
+.kpi-down{color:var(--red)}
+
+/* ---------- DATA TABLE ---------- */
+.table-container{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:2rem}
+.table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:.8rem}
+.table-toolbar h3{font-size:1rem;font-weight:700}
+.search-box{display:flex;align-items:center;gap:.5rem;background:var(--bg3);border-radius:8px;padding:.4rem .8rem;border:1px solid var(--border)}
+.search-box input{background:none;border:none;color:var(--txt);font-size:.85rem;outline:none;width:180px}
+.search-box input::placeholder{color:var(--txt3)}
+
+table{width:100%;border-collapse:collapse}
+thead{background:var(--bg3)}
+th{padding:.7rem 1rem;text-align:left;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--txt3);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:.7rem 1rem;font-size:.85rem;border-bottom:1px solid rgba(51,65,85,.4);vertical-align:middle}
+tr:hover td{background:rgba(99,102,241,.03)}
+.abc-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;font-weight:800;font-size:.75rem}
+.abc-a{background:rgba(34,197,94,.15);color:var(--green)}
+.abc-b{background:rgba(245,158,11,.15);color:var(--orange)}
+.abc-c{background:rgba(239,68,68,.15);color:var(--red)}
+.marketplace-badges{display:flex;gap:.3rem;flex-wrap:wrap}
+.mp-badge{padding:.15rem .5rem;border-radius:4px;font-size:.68rem;font-weight:700}
+.mp-ml{background:rgba(255,214,0,.12);color:#ffd600}
+.mp-amz{background:rgba(255,153,0,.12);color:#ff9900}
+.mp-shop{background:rgba(238,77,45,.12);color:#ee4d2d}
+.mp-mag{background:rgba(0,134,209,.12);color:#0086d1}
+.mp-tik{background:rgba(0,0,0,.2);color:#fff}
+.demand-bar{height:6px;border-radius:3px;background:var(--bg);overflow:hidden;width:100px}
+.demand-fill{height:100%;border-radius:3px}
+.editable{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:.3rem .5rem;color:var(--txt);font-size:.85rem;width:90px;text-align:right;outline:none;transition:.2s}
+.editable:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(99,102,241,.2)}
+.margin-pill{padding:.2rem .6rem;border-radius:20px;font-size:.75rem;font-weight:700}
+.margin-good{background:rgba(34,197,94,.15);color:var(--green)}
+.margin-ok{background:rgba(245,158,11,.15);color:var(--orange)}
+.margin-bad{background:rgba(239,68,68,.15);color:var(--red)}
+.kit-icon{font-size:.9rem;cursor:help}
+.score-bar{display:flex;align-items:center;gap:.4rem}
+.score-fill{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--cyan))}
+
+/* ---------- PRICING CALCULATOR ---------- */
+.pricing-layout{display:grid;grid-template-columns:380px 1fr;gap:2rem;align-items:start}
+.pricing-form{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:.78rem;font-weight:600;color:var(--txt2);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.3px}
+.form-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.55rem .8rem;color:var(--txt);font-size:.9rem;outline:none;transition:.2s}
+.form-input:focus{border-color:var(--accent)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+select.form-input{cursor:pointer}
+
+.mp-compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.mp-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:.2s}
+.mp-card:hover{border-color:var(--accent)}
+.mp-card-header{padding:1rem 1.2rem;display:flex;align-items:center;justify-content:space-between}
+.mp-card-header h4{font-weight:700;font-size:1rem}
+.mp-card-body{padding:0 1.2rem 1.2rem}
+.mp-row{display:flex;justify-content:space-between;padding:.4rem 0;font-size:.85rem;border-bottom:1px solid rgba(51,65,85,.3)}
+.mp-row:last-child{border:none}
+.mp-row .label{color:var(--txt2)}
+.mp-row .value{font-weight:600}
+.mp-card-footer{background:var(--bg3);padding:1rem 1.2rem;display:flex;justify-content:space-between;align-items:center}
+.mp-card-footer .profit-label{font-size:.78rem;color:var(--txt2)}
+.mp-card-footer .profit-value{font-size:1.4rem;font-weight:800}
+
+/* ---------- CHARTS AREA ---------- */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem}
+.chart-card h3{font-size:.95rem;font-weight:700;margin-bottom:1rem}
+.chart-placeholder{height:200px;display:flex;align-items:center;justify-content:center;color:var(--txt3);font-size:.85rem;background:var(--bg3);border-radius:8px}
+.chart-bar{display:flex;align-items:flex-end;gap:4px;height:180px;padding-top:20px}
+.chart-bar-item{flex:1;border-radius:4px 4px 0 0;min-width:12px;transition:.3s;cursor:pointer;position:relative}
+.chart-bar-item:hover{opacity:.8}
+.chart-bar-item .tooltip{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--bg);padding:.3rem .6rem;border-radius:4px;font-size:.7rem;white-space:nowrap;border:1px solid var(--border)}
+.chart-bar-item:hover .tooltip{display:block}
+
+/* ---------- FILTERS ---------- */
+.filters{display:flex;gap:.8rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}
+.filter-chip{padding:.4rem .9rem;border-radius:20px;font-size:.8rem;font-weight:600;background:var(--bg3);color:var(--txt2);border:1px solid var(--border);cursor:pointer;transition:.2s}
+.filter-chip:hover,.filter-chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ---------- TABS ---------- */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:1.5rem}
+.tab{padding:.7rem 1.5rem;font-weight:600;font-size:.88rem;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:.2s}
+.tab:hover{color:var(--txt)}
+.tab.active{color:var(--accent2);border-bottom-color:var(--accent)}
+
+/* ---------- MISC ---------- */
+.flex{display:flex}.gap-1{gap:.5rem}.gap-2{gap:1rem}.items-center{align-items:center}.justify-between{justify-content:space-between}.flex-wrap{flex-wrap:wrap}
+.text-green{color:var(--green)}.text-red{color:var(--red)}.text-orange{color:var(--orange)}.text-accent{color:var(--accent2)}.text-muted{color:var(--txt2)}.text-xs{font-size:.75rem}.text-sm{font-size:.85rem}.text-lg{font-size:1.2rem}.font-bold{font-weight:700}.font-mono{font-family:'JetBrains Mono',monospace}
+.mt-1{margin-top:.5rem}.mt-2{margin-top:1rem}.mt-3{margin-top:1.5rem}.mb-1{margin-bottom:.5rem}.mb-2{margin-bottom:1rem}
+
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--txt3)}
+.empty-state .icon{font-size:3rem;margin-bottom:1rem}
+.empty-state h3{font-size:1.2rem;color:var(--txt2);margin-bottom:.5rem}
+
+.progress-ring{width:60px;height:60px;position:relative}
+.progress-ring svg{transform:rotate(-90deg)}
+.progress-ring circle{fill:none;stroke-width:5}
+.progress-ring .bg{stroke:var(--bg3)}
+.progress-ring .fill{stroke:var(--accent);stroke-linecap:round;transition:.5s}
+.progress-ring .center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.8rem;font-weight:800}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:fadeIn .4s ease-out}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.pulse{animation:pulse 2s infinite}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--txt3)}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     LANDING PAGE
+     ============================================================ -->
+<div class="landing" id="landingPage">
+  <nav class="landing-nav">
+    <div class="logo">VIMA<span>Corp</span></div>
+    <div class="nav-links">
+      <a href="#" onclick="event.preventDefault()">Produtos</a>
+      <a href="#" onclick="event.preventDefault()">Planos</a>
+      <a href="#" onclick="event.preventDefault()">Sobre</a>
+      <button class="btn btn-outline btn-sm" onclick="enterApp()">Entrar</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1>DecisÃµes de compra<br>com <span class="grad">inteligÃªncia real</span></h1>
+    <p>Analise catÃ¡logos de fornecedores, cruze com demanda dos marketplaces, precifique com precisÃ£o e venda com margem. Tudo em uma plataforma.</p>
+    <div class="hero-cta">
+      <button class="btn btn-primary" onclick="enterApp()" style="font-size:1rem;padding:.8rem 2rem">ComeÃ§ar Agora â</button>
+      <button class="btn btn-ghost" style="font-size:1rem;padding:.8rem 2rem">Ver Demo</button>
+    </div>
+  </section>
+
+  <section class="modules" id="modulesSection">
+    <div class="module-card mc-analytics" onclick="enterApp('analytics')">
+      <div class="icon">ð</div>
+      <h3>VIMA Analytics</h3>
+      <p>Upload de catÃ¡logo â IA extrai produtos â cruza com demanda real â ranking ABC â sugere kits â dashboard interativo com campos editÃ¡veis de custo e margem dinÃ¢mica.</p>
+      <span class="tag tag-new">NOVO</span>
+    </div>
+    <div class="module-card mc-pricing" onclick="enterApp('pricing')">
+      <div class="icon">ð°</div>
+      <h3>VIMA Pricing</h3>
+      <p>Calculadora multi-marketplace com comparativo lado a lado. Simule Mercado Livre, Amazon, Shopee, Magalu e TikTok Shop com taxas reais atualizadas.</p>
+      <span class="tag tag-new">NOVO</span>
+    </div>
+    <div class="module-card mc-studio" onclick="event.preventDefault()">
+      <div class="icon">ð¨</div>
+      <h3>VIMA Studio</h3>
+      <p>GeraÃ§Ã£o automÃ¡tica de carrosseis criativos com IA. Upload de foto â briefing estratÃ©gico â 6 imagens otimizadas para conversÃ£o em marketplaces.</p>
+      <span class="tag tag-beta">BETA</span>
+    </div>
+  </section>
+</div>
+
+<!-- ============================================================
+     APP SHELL
+     ============================================================ -->
+<div class="app" id="appShell">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo" style="font-size:1.1rem;cursor:pointer" onclick="goLanding()">VIMA<span>Corp</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Analytics</div>
+        <a class="nav-item active" data-view="analytics-dashboard" onclick="switchView(this)">
+          <span class="nav-icon">ð</span> Dashboard
+        </a>
+        <a class="nav-item" data-view="analytics-catalog" onclick="switchView(this)">
+          <span class="nav-icon">ð</span> CatÃ¡logos
+        </a>
+        <a class="nav-item" data-view="analytics-demand" onclick="switchView(this)">
+          <span class="nav-icon">ð</span> Demanda
+        </a>
+        <a class="nav-item" data-view="analytics-kits" onclick="switchView(this)">
+          <span class="nav-icon">ð§©</span> Kits Sugeridos
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Pricing</div>
+        <a class="nav-item" data-view="pricing-calc" onclick="switchView(this)">
+          <span class="nav-icon">ð°</span> Calculadora
+        </a>
+        <a class="nav-item" data-view="pricing-compare" onclick="switchView(this)">
+          <span class="nav-icon">âï¸</span> Comparativo
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Studio</div>
+        <a class="nav-item" data-view="studio" onclick="switchView(this)" style="opacity:.5">
+          <span class="nav-icon">ð¨</span> Criativos <span class="tag tag-beta" style="margin:0;margin-left:auto;font-size:.6rem">BETA</span>
+        </a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="avatar">JM</div>
+      <div>
+        <div class="user-name">Vitorinni</div>
+        <div class="user-plan">Plano Pro</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <h2 id="viewTitle">VIMA Analytics â Dashboard</h2>
+      <div class="topbar-actions">
+        <button class="btn btn-sm btn-outline" onclick="loadDemoData()">ð Carregar Demo</button>
+        <button class="btn btn-sm btn-primary" onclick="document.getElementById('fileInput').click()">ð Importar CatÃ¡logo</button>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.pdf" style="display:none" onchange="handleFileUpload(event)">
+      </div>
+    </div>
+
+    <div class="content" id="contentArea">
+      <!-- Content rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// VIMA Corp â Main Application Logic
+// ============================================================
+
+// ---------- STATE ----------
+const state = {
+  currentView: 'analytics-dashboard',
+  products: [],
+  filters: { abc: 'all', marketplace: 'all', search: '' },
+  pricing: { nome:'', custoUnit:0, embalagem:0, kitQtd:1, imposto:4.5, freteVendedor:0 },
+  loaded: false
+};
+
+// ---------- DEMO DATA ----------
+function generateDemoProducts() {
+  const items = [
+    {sku:'GAV-001',nome:'Gaveteiro Organizador 4 Andares Multiuso',custo:24.89,peso:.8,cat:'OrganizaÃ§Ã£o',img:'ð¦'},
+    {sku:'PAN-002',nome:'Jogo de Panelas Antiaderente 5 PeÃ§as',custo:89.90,peso:3.2,cat:'Cozinha',img:'ð³'},
+    {sku:'CXO-003',nome:'Caixa Organizadora Rattan 4L com Tampa',custo:11.28,peso:.3,cat:'OrganizaÃ§Ã£o',img:'ð¦'},
+    {sku:'FRM-004',nome:'Forma de Pudim para Microondas 1,9L',custo:4.37,peso:.2,cat:'Cozinha',img:'ð®'},
+    {sku:'DSP-005',nome:'Kit 2 Dispenser 2,3L Detergente/SabÃ£o',custo:18.50,peso:.6,cat:'Cozinha',img:'ð§´'},
+    {sku:'VAS-006',nome:'Vaso AutoirrigÃ¡vel Polietileno N3',custo:7.90,peso:.4,cat:'Jardim',img:'ð±'},
+    {sku:'LMP-007',nome:'LuminÃ¡ria LED Touch RecarregÃ¡vel USB',custo:32.50,peso:.35,cat:'IluminaÃ§Ã£o',img:'ð¡'},
+    {sku:'ORG-008',nome:'Organizador de Pia Cozinha Inox',custo:15.60,peso:.5,cat:'Cozinha',img:'ð§'},
+    {sku:'PRT-009',nome:'Porta PÃ£o de Forma Transparente',custo:9.45,peso:.25,cat:'Cozinha',img:'ð'},
+    {sku:'JGF-010',nome:'Jogo de Facas 7 PeÃ§as com Cepo',custo:42.80,peso:1.8,cat:'Cozinha',img:'ðª'},
+    {sku:'SEC-011',nome:'Secador de Saladas 5,5L Clear Fresh',custo:14.20,peso:.6,cat:'Cozinha',img:'ð¥'},
+    {sku:'GAL-012',nome:'Jogo Galheteiro Porta Condimentos Inox',custo:28.70,peso:.9,cat:'Cozinha',img:'ð§'},
+    {sku:'CSP-013',nome:'Caspo Polietileno Jardim N4 Premium',custo:12.50,peso:.5,cat:'Jardim',img:'ðª´'},
+    {sku:'KIT-014',nome:'Kit Banheiro 5 PeÃ§as CerÃ¢mica',custo:35.90,peso:2.0,cat:'Banheiro',img:'ð¿'},
+    {sku:'PPR-015',nome:'Porta Papel Toalha Inox de Bancada',custo:22.30,peso:.7,cat:'Cozinha',img:'ð§»'},
+    {sku:'TBR-016',nome:'TÃ¡bua de Corte Bambu 38x28cm',custo:19.90,peso:.6,cat:'Cozinha',img:'ðªµ'},
+    {sku:'LXR-017',nome:'Lixeira AutomÃ¡tica Sensor 12L Inox',custo:78.50,peso:2.5,cat:'Casa',img:'ðï¸'},
+    {sku:'ESC-018',nome:'Escorredor de LouÃ§as Inox 2 Andares',custo:45.60,peso:1.5,cat:'Cozinha',img:'ð½ï¸'},
+    {sku:'CJG-019',nome:'Conjunto Potes HermÃ©ticos 10 PeÃ§as',custo:29.90,peso:1.2,cat:'Cozinha',img:'ð«'},
+    {sku:'ARM-020',nome:'Aromatizador Ambiente Varetas 250ml',custo:8.90,peso:.4,cat:'Casa',img:'ð¯ï¸'},
+  ];
+
+  const marketplaces = ['ML','Amazon','Shopee','Magalu','TikTok'];
+
+  return items.map((item, i) => {
+    const demandScore = Math.round(Math.random()*60 + 40);
+    const competicao = Math.round(Math.random()*80 + 20);
+    const vendas7d = Math.round(Math.random()*50 + (demandScore > 70 ? 30 : 5));
+    const vendas30d = vendas7d * (3.5 + Math.random()*1.5);
+    const precoSugerido = item.custo * (2.2 + Math.random()*.8);
+    const mps = marketplaces.filter(() => Math.random() > .25);
+    if(mps.length === 0) mps.push('ML');
+    const abc = demandScore > 75 ? 'A' : demandScore > 50 ? 'B' : 'C';
+    const kitSugestao = Math.random() > .6 ? items[Math.floor(Math.random()*items.length)].sku : null;
+    const opportunity = Math.round((demandScore * (100 - competicao) / 100) * (precoSugerido / item.custo) / 3);
+
+    return {
+      ...item,
+      id: i+1,
+      demandScore,
+      competicao,
+      vendas7d: Math.round(vendas7d),
+      vendas30d: Math.round(vendas30d),
+      precoSugerido: Math.round(precoSugerido * 100)/100,
+      precoVenda: Math.round(precoSugerido * 100)/100,
+      marketplaces: mps,
+      abc,
+      kitSugestao,
+      opportunity: Math.min(100, Math.max(10, opportunity)),
+      custoEdit: item.custo,
+      embalagem: Math.round((1 + Math.random()*3)*100)/100,
+      imposto: 4.5,
+      frete: Math.round((5 + Math.random()*15)*100)/100,
+    };
+  }).sort((a,b) => b.opportunity - a.opportunity);
+}
+
+// ---------- NAVIGATION ----------
+function enterApp(module) {
+  document.getElementById('landingPage').style.display = 'none';
+  document.getElementById('appShell').classList.add('active');
+  if(module === 'pricing') {
+    const el = document.querySelector('[data-view="pricing-calc"]');
+    switchView(el);
+  } else {
+    renderView();
+  }
+}
+
+function goLanding() {
+  document.getElementById('appShell').classList.remove('active');
+  document.getElementById('landingPage').style.display = '';
+}
+
+function switchView(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  state.currentView = el.dataset.view;
+  renderView();
+}
+
+// ---------- RENDER ROUTER ----------
+function renderView() {
+  const c = document.getElementById('contentArea');
+  const titles = {
+    'analytics-dashboard': 'VIMA Analytics â Dashboard',
+    'analytics-catalog': 'VIMA Analytics â CatÃ¡logos',
+    'analytics-demand': 'VIMA Analytics â AnÃ¡lise de Demanda',
+    'analytics-kits': 'VIMA Analytics â Kits Sugeridos',
+    'pricing-calc': 'VIMA Pricing â Calculadora',
+    'pricing-compare': 'VIMA Pricing â Comparativo Multi-Marketplace',
+    'studio': 'VIMA Studio',
+  };
+  document.getElementById('viewTitle').textContent = titles[state.currentView] || 'VIMA Corp';
+
+  switch(state.currentView) {
+    case 'analytics-dashboard': renderAnalyticsDashboard(c); break;
+    case 'analytics-catalog': renderCatalog(c); break;
+    case 'analytics-demand': renderDemand(c); break;
+    case 'analytics-kits': renderKits(c); break;
+    case 'pricing-calc': renderPricingCalc(c); break;
+    case 'pricing-compare': renderPricingCompare(c); break;
+    case 'studio': renderStudio(c); break;
+  }
+}
+
+// ---------- FILE UPLOAD ----------
+function handleFileUpload(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+  // Simulate processing
+  loadDemoData();
+}
+
+function loadDemoData() {
+  state.products = generateDemoProducts();
+  state.loaded = true;
+  renderView();
+}
+
+// ---------- ANALYTICS DASHBOARD ----------
+function renderAnalyticsDashboard(c) {
+  if(!state.loaded) {
+    c.innerHTML = `
+      <div class="upload-zone" onclick="document.getElementById('fileInput').click()" id="dropZone">
+        <div class="icon">ð</div>
+        <h3>Importe seu catÃ¡logo de fornecedor</h3>
+        <p>Arraste um arquivo PDF, XLSX ou CSV â ou clique para selecionar</p>
+        <p class="text-xs text-muted mt-1">A IA vai extrair os produtos, cruzar com demanda real dos marketplaces e gerar seu ranking de oportunidade</p>
+      </div>
+      <div style="text-align:center">
+        <button class="btn btn-outline" onclick="loadDemoData()">ð¯ Carregar dados de demonstraÃ§Ã£o</button>
+      </div>
+    `;
+    return;
+  }
+
+  const prods = state.products;
+  const totalProds = prods.length;
+  const abcA = prods.filter(p=>p.abc==='A').length;
+  const abcB = prods.filter(p=>p.abc==='B').length;
+  const abcC = prods.filter(p=>p.abc==='C').length;
+  const avgMargin = prods.reduce((s,p) => s + ((p.precoVenda - p.custoEdit - p.embalagem) / p.precoVenda * 100), 0) / totalProds;
+  const totalVendas30d = prods.reduce((s,p) => s + p.vendas30d, 0);
+  const topOpp = prods[0];
+
+  c.innerHTML = `
+    <div class="kpi-grid animate-in">
+      <div class="kpi">
+        <div class="kpi-label">Produtos Analisados</div>
+        <div class="kpi-value">${totalProds}</div>
+        <div class="kpi-sub">Do catÃ¡logo importado</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Curva A (alta demanda)</div>
+        <div class="kpi-value text-green">${abcA}</div>
+        <div class="kpi-sub kpi-up">â ${Math.round(abcA/totalProds*100)}% do catÃ¡logo</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Curva B (mÃ©dia)</div>
+        <div class="kpi-value text-orange">${abcB}</div>
+        <div class="kpi-sub">${Math.round(abcB/totalProds*100)}% do catÃ¡logo</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Curva C (baixa)</div>
+        <div class="kpi-value text-red">${abcC}</div>
+        <div class="kpi-sub">${Math.round(abcC/totalProds*100)}% do catÃ¡logo</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Margem MÃ©dia Projetada</div>
+        <div class="kpi-value ${avgMargin>30?'text-green':avgMargin>15?'text-orange':'text-red'}">${avgMargin.toFixed(1)}%</div>
+        <div class="kpi-sub">Antes de taxas de marketplace</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Vendas Est. 30d (mercado)</div>
+        <div class="kpi-value">${totalVendas30d.toLocaleString('pt-BR')}</div>
+        <div class="kpi-sub">Unidades em todos os marketplaces</div>
+      </div>
+    </div>
+
+    <div class="chart-grid animate-in">
+      <div class="chart-card">
+        <h3>ð Top 10 por Score de Oportunidade</h3>
+        <div class="chart-bar" id="oppChart"></div>
+      </div>
+      <div class="chart-card">
+        <h3>ð DistribuiÃ§Ã£o por Categoria</h3>
+        <div class="chart-bar" id="catChart"></div>
+      </div>
+    </div>
+
+    <div class="table-container animate-in">
+      <div class="table-toolbar">
+        <h3>ð Ranking de Oportunidade â Todos os Produtos</h3>
+        <div class="flex gap-1 items-center">
+          <div class="filters" style="margin:0">
+            <span class="filter-chip ${state.filters.abc==='all'?'active':''}" onclick="setFilter('abc','all')">Todos</span>
+            <span class="filter-chip ${state.filters.abc==='A'?'active':''}" onclick="setFilter('abc','A')">Curva A</span>
+            <span class="filter-chip ${state.filters.abc==='B'?'active':''}" onclick="setFilter('abc','B')">Curva B</span>
+            <span class="filter-chip ${state.filters.abc==='C'?'active':''}" onclick="setFilter('abc','C')">Curva C</span>
+          </div>
+          <div class="search-box">
+            <span>ð</span>
+            <input placeholder="Buscar produto..." oninput="setFilter('search',this.value)">
+          </div>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>ABC</th>
+              <th></th>
+              <th>Produto</th>
+              <th>Score</th>
+              <th>Demanda</th>
+              <th>Vendas 30d</th>
+              <th>Marketplaces</th>
+              <th>Custo Unit. (editÃ¡vel)</th>
+              <th>PreÃ§o Sugerido</th>
+              <th>Margem Bruta</th>
+              <th>Kit?</th>
+            </tr>
+          </thead>
+          <tbody id="productTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  renderProductTable();
+  renderOppChart();
+  renderCatChart();
+}
+
+function renderProductTable() {
+  const tbody = document.getElementById('productTableBody');
+  if(!tbody) return;
+
+  let prods = [...state.products];
+  if(state.filters.abc !== 'all') prods = prods.filter(p => p.abc === state.filters.abc);
+  if(state.filters.search) {
+    const q = state.filters.search.toLowerCase();
+    prods = prods.filter(p => p.nome.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
+  }
+
+  tbody.innerHTML = prods.map(p => {
+    const margin = ((p.precoVenda - p.custoEdit - p.embalagem) / p.precoVenda * 100);
+    const marginClass = margin > 30 ? 'margin-good' : margin > 15 ? 'margin-ok' : 'margin-bad';
+    const demandColor = p.demandScore > 75 ? 'var(--green)' : p.demandScore > 50 ? 'var(--orange)' : 'var(--red)';
+
+    return `<tr>
+      <td><span class="abc-badge abc-${p.abc.toLowerCase()}">${p.abc}</span></td>
+      <td style="font-size:1.3rem">${p.img}</td>
+      <td>
+        <div class="font-bold" style="font-size:.85rem">${p.nome}</div>
+        <div class="text-xs text-muted">${p.sku} Â· ${p.cat}</div>
+      </td>
+      <td>
+        <div class="score-bar">
+          <div class="score-fill" style="width:${p.opportunity}px"></div>
+          <span class="font-bold text-sm">${p.opportunity}</span>
+        </div>
+      </td>
+      <td>
+        <div class="demand-bar"><div class="demand-fill" style="width:${p.demandScore}%;background:${demandColor}"></div></div>
+        <span class="text-xs text-muted">${p.demandScore}/100</span>
+      </td>
+      <td class="font-bold">${p.vendas30d.toLocaleString('pt-BR')}</td>
+      <td>
+        <div class="marketplace-badges">
+          ${p.marketplaces.map(m => `<span class="mp-badge mp-${m.toLowerCase().replace(' ','')}">${m}</span>`).join('')}
+        </div>
+      </td>
+      <td>
+        <input type="number" class="editable" value="${p.custoEdit.toFixed(2)}" step="0.01"
+          onchange="updateCost(${p.id}, this.value)">
+      </td>
+      <td class="font-bold">R$ ${p.precoVenda.toFixed(2)}</td>
+      <td><span class="margin-pill ${marginClass}">${margin.toFixed(1)}%</span></td>
+      <td>${p.kitSugestao ? '<span class="kit-icon" title="Kit possÃ­vel com '+p.kitSugestao+'">ð§©</span>' : 'â'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function updateCost(id, val) {
+  const p = state.products.find(x => x.id === id);
+  if(p) {
+    p.custoEdit = parseFloat(val) || 0;
+    renderProductTable();
+  }
+}
+
+function setFilter(key, val) {
+  state.filters[key] = val;
+  renderView();
+}
+
+function renderOppChart() {
+  const container = document.getElementById('oppChart');
+  if(!container) return;
+  const top10 = state.products.slice(0, 10);
+  const max = Math.max(...top10.map(p => p.opportunity));
+  container.innerHTML = top10.map(p => {
+    const h = (p.opportunity / max) * 160;
+    const color = p.abc === 'A' ? 'var(--green)' : p.abc === 'B' ? 'var(--orange)' : 'var(--red)';
+    return `<div class="chart-bar-item" style="height:${h}px;background:${color}" title="${p.nome}">
+      <div class="tooltip">${p.nome.substring(0,25)}... â ${p.opportunity}pts</div>
+    </div>`;
+  }).join('');
+}
+
+function renderCatChart() {
+  const container = document.getElementById('catChart');
+  if(!container) return;
+  const cats = {};
+  state.products.forEach(p => { cats[p.cat] = (cats[p.cat]||0) + 1; });
+  const entries = Object.entries(cats).sort((a,b) => b[1]-a[1]);
+  const max = Math.max(...entries.map(e => e[1]));
+  const colors = ['var(--accent)','var(--cyan)','var(--green)','var(--orange)','var(--pink)','var(--blue)'];
+  container.innerHTML = entries.map(([cat,count], i) => {
+    const h = (count / max) * 160;
+    return `<div class="chart-bar-item" style="height:${h}px;background:${colors[i%colors.length]}">
+      <div class="tooltip">${cat}: ${count} produtos</div>
+    </div>`;
+  }).join('');
+}
+
+// ---------- CATALOG VIEW ----------
+function renderCatalog(c) {
+  c.innerHTML = `
+    <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+      <div class="icon">ð</div>
+      <h3>Importar Novo CatÃ¡logo</h3>
+      <p>PDF, XLSX ou CSV de fornecedor</p>
+    </div>
+    ${state.loaded ? `
+    <div class="table-container">
+      <div class="table-toolbar">
+        <h3>CatÃ¡logo: Fornecedor Demo</h3>
+        <span class="text-sm text-muted">${state.products.length} produtos extraÃ­dos</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th></th><th>SKU</th><th>Produto</th><th>Categoria</th><th>Custo</th><th>Peso Est.</th></tr></thead>
+          <tbody>
+            ${state.products.map(p => `
+              <tr>
+                <td style="font-size:1.2rem">${p.img}</td>
+                <td class="font-mono text-sm">${p.sku}</td>
+                <td class="font-bold">${p.nome}</td>
+                <td><span class="filter-chip" style="cursor:default">${p.cat}</span></td>
+                <td>R$ ${p.custo.toFixed(2)}</td>
+                <td>${p.peso}kg</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>` : '<div class="empty-state"><div class="icon">ð</div><h3>Nenhum catÃ¡logo importado</h3><p>Importe um catÃ¡logo para comeÃ§ar a anÃ¡lise</p></div>'}
+  `;
+}
+
+// ---------- DEMAND VIEW ----------
+function renderDemand(c) {
+  if(!state.loaded) { c.innerHTML = '<div class="empty-state"><div class="icon">ð</div><h3>Importe um catÃ¡logo primeiro</h3></div>'; return; }
+
+  const prods = state.products;
+  c.innerHTML = `
+    <div class="kpi-grid animate-in">
+      <div class="kpi">
+        <div class="kpi-label">Maior Demanda</div>
+        <div class="kpi-value text-green">${prods.reduce((a,b) => a.demandScore > b.demandScore ? a : b).nome.substring(0,20)}...</div>
+        <div class="kpi-sub">Score ${prods.reduce((a,b) => a.demandScore > b.demandScore ? a : b).demandScore}/100</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Menor CompetiÃ§Ã£o</div>
+        <div class="kpi-value text-cyan">${prods.reduce((a,b) => a.competicao < b.competicao ? a : b).nome.substring(0,20)}...</div>
+        <div class="kpi-sub">CompetiÃ§Ã£o ${prods.reduce((a,b) => a.competicao < b.competicao ? a : b).competicao}/100</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Melhor Margem</div>
+        <div class="kpi-value text-accent">${prods.reduce((a,b) => ((a.precoVenda-a.custoEdit)/a.precoVenda) > ((b.precoVenda-b.custoEdit)/b.precoVenda) ? a : b).nome.substring(0,20)}...</div>
+      </div>
+    </div>
+    <div class="table-container animate-in">
+      <div class="table-toolbar">
+        <h3>ð AnÃ¡lise de Demanda por Marketplace</h3>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Produto</th><th>Demanda</th><th>CompetiÃ§Ã£o</th><th>Vendas 7d</th><th>Vendas 30d</th><th>Ticket MÃ©dio</th><th>TendÃªncia</th></tr></thead>
+          <tbody>
+            ${prods.sort((a,b) => b.demandScore - a.demandScore).map(p => {
+              const ticket = p.precoVenda;
+              const trend = p.vendas7d > (p.vendas30d/4) ? 'â' : p.vendas7d < (p.vendas30d/5) ? 'â' : 'â';
+              const trendClass = trend === 'â' ? 'text-green' : trend === 'â' ? 'text-red' : 'text-orange';
+              return `<tr>
+                <td><span class="font-bold">${p.img} ${p.nome.substring(0,35)}</span><br><span class="text-xs text-muted">${p.sku}</span></td>
+                <td><div class="demand-bar" style="width:120px"><div class="demand-fill" style="width:${p.demandScore}%;background:${p.demandScore>70?'var(--green)':'var(--orange)'}"></div></div> ${p.demandScore}</td>
+                <td><div class="demand-bar" style="width:120px"><div class="demand-fill" style="width:${p.competicao}%;background:${p.competicao>70?'var(--red)':'var(--green)'}"></div></div> ${p.competicao}</td>
+                <td class="font-bold">${p.vendas7d}</td>
+                <td class="font-bold">${p.vendas30d.toLocaleString('pt-BR')}</td>
+                <td>R$ ${ticket.toFixed(2)}</td>
+                <td class="${trendClass} font-bold" style="font-size:1.2rem">${trend}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ---------- KITS VIEW ----------
+function renderKits(c) {
+  if(!state.loaded) { c.innerHTML = '<div class="empty-state"><div class="icon">ð§©</div><h3>Importe um catÃ¡logo primeiro</h3></div>'; return; }
+
+  const kits = [
+    {nome:'Kit Cozinha Completa',produtos:['PAN-002','JGF-010','ORG-008','TBR-016'],desconto:12,demandBoost:25},
+    {nome:'Kit OrganizaÃ§Ã£o Total',produtos:['GAV-001','CXO-003','CJG-019'],desconto:8,demandBoost:18},
+    {nome:'Kit Jardim Vivo',produtos:['VAS-006','CSP-013'],desconto:10,demandBoost:15},
+    {nome:'Kit Casa Aroma + Luz',produtos:['ARM-020','LMP-007'],desconto:15,demandBoost:30},
+  ];
+
+  c.innerHTML = `
+    <div class="kpi-grid animate-in">
+      <div class="kpi">
+        <div class="kpi-label">Kits Identificados pela IA</div>
+        <div class="kpi-value">${kits.length}</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Aumento MÃ©dio de Demanda</div>
+        <div class="kpi-value text-green">+${Math.round(kits.reduce((s,k)=>s+k.demandBoost,0)/kits.length)}%</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Ticket MÃ©dio do Kit</div>
+        <div class="kpi-value">R$ ${(kits.reduce((s,k) => s + k.produtos.reduce((ss,sku) => {const p=state.products.find(x=>x.sku===sku);return ss+(p?p.precoVenda:0)},0),0) / kits.length).toFixed(2)}</div>
+      </div>
+    </div>
+
+    <div class="mp-compare animate-in">
+      ${kits.map(k => {
+        const prodList = k.produtos.map(sku => state.products.find(p=>p.sku===sku)).filter(Boolean);
+        const custoTotal = prodList.reduce((s,p) => s + p.custoEdit, 0);
+        const precoTotal = prodList.reduce((s,p) => s + p.precoVenda, 0);
+        const precoKit = precoTotal * (1 - k.desconto/100);
+        const margin = ((precoKit - custoTotal) / precoKit * 100);
+        return `
+        <div class="mp-card">
+          <div class="mp-card-header">
+            <h4>ð§© ${k.nome}</h4>
+            <span class="tag tag-new">+${k.demandBoost}% demanda</span>
+          </div>
+          <div class="mp-card-body">
+            ${prodList.map(p => `
+              <div class="mp-row">
+                <span class="label">${p.img} ${p.nome.substring(0,30)}</span>
+                <span class="value">R$ ${p.precoVenda.toFixed(2)}</span>
+              </div>
+            `).join('')}
+            <div class="mp-row" style="border-top:2px solid var(--border);padding-top:.8rem;margin-top:.4rem">
+              <span class="label font-bold">Desconto Kit</span>
+              <span class="value text-green">-${k.desconto}%</span>
+            </div>
+          </div>
+          <div class="mp-card-footer">
+            <div>
+              <div class="profit-label">PreÃ§o Kit</div>
+              <div class="profit-value">R$ ${precoKit.toFixed(2)}</div>
+            </div>
+            <span class="margin-pill ${margin>25?'margin-good':'margin-ok'}">${margin.toFixed(1)}% margem</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ---------- PRICING CALCULATOR ----------
+function renderPricingCalc(c) {
+  c.innerHTML = `
+    <div class="pricing-layout animate-in">
+      <div class="pricing-form">
+        <h3 style="margin-bottom:1.2rem;font-size:1.05rem">Dados do Produto</h3>
+        <div class="form-group">
+          <label>Nome do Produto</label>
+          <input class="form-input" id="pNome" placeholder="Ex: Jogo de Panelas 5 PeÃ§as" value="${state.pricing.nome}" oninput="state.pricing.nome=this.value;calcPricing()">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Custo UnitÃ¡rio (R$)</label>
+            <input class="form-input" type="number" id="pCusto" step="0.01" value="${state.pricing.custoUnit||''}" oninput="state.pricing.custoUnit=+this.value;calcPricing()">
+          </div>
+          <div class="form-group">
+            <label>Embalagem (R$)</label>
+            <input class="form-input" type="number" id="pEmb" step="0.01" value="${state.pricing.embalagem||''}" oninput="state.pricing.embalagem=+this.value;calcPricing()">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Qtd no Kit</label>
+            <input class="form-input" type="number" id="pKit" value="${state.pricing.kitQtd}" min="1" oninput="state.pricing.kitQtd=+this.value;calcPricing()">
+          </div>
+          <div class="form-group">
+            <label>Imposto (%)</label>
+            <input class="form-input" type="number" id="pImp" step="0.1" value="${state.pricing.imposto}" oninput="state.pricing.imposto=+this.value;calcPricing()">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Frete Vendedor (R$)</label>
+          <input class="form-input" type="number" id="pFrete" step="0.01" value="${state.pricing.freteVendedor||''}" oninput="state.pricing.freteVendedor=+this.value;calcPricing()">
+        </div>
+        <div class="form-group mt-2">
+          <label>PreÃ§o de Venda Desejado (R$)</label>
+          <input class="form-input" type="number" id="pPreco" step="0.01" style="font-size:1.2rem;font-weight:700" oninput="calcPricing()">
+        </div>
+      </div>
+
+      <div>
+        <h3 style="margin-bottom:1rem;font-size:1.05rem">âï¸ Comparativo por Marketplace</h3>
+        <div class="mp-compare" id="pricingCards"></div>
+      </div>
+    </div>
+  `;
+  calcPricing();
+}
+
+function calcPricing() {
+  const container = document.getElementById('pricingCards');
+  if(!container) return;
+
+  const precoEl = document.getElementById('pPreco');
+  const preco = parseFloat(precoEl?.value) || 0;
+  const p = state.pricing;
+  const custoBase = (p.custoUnit * p.kitQtd) + p.embalagem;
+
+  const marketplaces = [
+    {nome:'Mercado Livre',tag:'ClÃ¡ssico',comissao:12,taxaFixa:6,cor:'#ffd600',full:false},
+    {nome:'Mercado Livre',tag:'Premium',comissao:17,taxaFixa:6,cor:'#ffd600',full:true},
+    {nome:'Amazon',tag:'PadrÃ£o',comissao:15,taxaFixa:0,cor:'#ff9900',full:false},
+    {nome:'Shopee',tag:'CNPJ',comissao:14,taxaFixa:0,cor:'#ee4d2d',full:false,antecipacao:2},
+    {nome:'Magalu',tag:'Marketplace',comissao:16,taxaFixa:0,cor:'#0086d1',full:false},
+    {nome:'TikTok Shop',tag:'',comissao:8,taxaFixa:0,cor:'#fff',full:false},
+  ];
+
+  container.innerHTML = marketplaces.map(mp => {
+    const comissaoR = preco * (mp.comissao / 100);
+    const taxaFixaR = mp.taxaFixa;
+    const impostoR = preco * (p.imposto / 100);
+    const antecipacaoR = mp.antecipacao ? preco * (mp.antecipacao/100) : 0;
+    const freteR = p.freteVendedor;
+    const totalDescontos = comissaoR + taxaFixaR + impostoR + antecipacaoR + freteR;
+    const lucro = preco - custoBase - totalDescontos;
+    const margem = preco > 0 ? (lucro / preco * 100) : 0;
+
+    return `
+    <div class="mp-card">
+      <div class="mp-card-header" style="border-left:4px solid ${mp.cor}">
+        <h4>${mp.nome}</h4>
+        <span class="text-xs text-muted">${mp.tag}</span>
+      </div>
+      <div class="mp-card-body">
+        <div class="mp-row"><span class="label">PreÃ§o Venda</span><span class="value">R$ ${preco.toFixed(2)}</span></div>
+        <div class="mp-row"><span class="label">Custo Produto</span><span class="value text-red">-R$ ${custoBase.toFixed(2)}</span></div>
+        <div class="mp-row"><span class="label">ComissÃ£o (${mp.comissao}%)</span><span class="value text-red">-R$ ${comissaoR.toFixed(2)}</span></div>
+        ${taxaFixaR > 0 ? `<div class="mp-row"><span class="label">Taxa Fixa</span><span class="value text-red">-R$ ${taxaFixaR.toFixed(2)}</span></div>` : ''}
+        <div class="mp-row"><span class="label">Imposto (${p.imposto}%)</span><span class="value text-red">-R$ ${impostoR.toFixed(2)}</span></div>
+        ${antecipacaoR > 0 ? `<div class="mp-row"><span class="label">AntecipaÃ§Ã£o (${mp.antecipacao}%)</span><span class="value text-red">-R$ ${antecipacaoR.toFixed(2)}</span></div>` : ''}
+        ${freteR > 0 ? `<div class="mp-row"><span class="label">Frete Vendedor</span><span class="value text-red">-R$ ${freteR.toFixed(2)}</span></div>` : ''}
+      </div>
+      <div class="mp-card-footer" style="border-left:4px solid ${margem > 20 ? 'var(--green)' : margem > 0 ? 'var(--orange)' : 'var(--red)'}">
+        <div>
+          <div class="profit-label">Lucro LÃ­quido</div>
+          <div class="profit-value ${lucro >= 0 ? 'text-green' : 'text-red'}">R$ ${lucro.toFixed(2)}</div>
+        </div>
+        <span class="margin-pill ${margem > 20 ? 'margin-good' : margem > 0 ? 'margin-ok' : 'margin-bad'}">${margem.toFixed(1)}%</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ---------- PRICING COMPARE ----------
+function renderPricingCompare(c) {
+  if(!state.loaded) {
+    c.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">âï¸</div>
+        <h3>Importe um catÃ¡logo para ver o comparativo automÃ¡tico</h3>
+        <p class="text-muted">Ou use a Calculadora para simular manualmente</p>
+        <button class="btn btn-outline mt-2" onclick="loadDemoData()">Carregar Demo</button>
+      </div>`;
+    return;
+  }
+
+  c.innerHTML = `
+    <p class="text-muted mb-2">Comparativo de margem lÃ­quida por marketplace para cada produto do catÃ¡logo. Os valores consideram as taxas reais de cada plataforma.</p>
+    <div class="table-container animate-in">
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Custo</th>
+              <th>PreÃ§o</th>
+              <th style="background:rgba(255,214,0,.08)">ML ClÃ¡ssico</th>
+              <th style="background:rgba(255,214,0,.08)">ML Premium</th>
+              <th style="background:rgba(255,153,0,.08)">Amazon</th>
+              <th style="background:rgba(238,77,45,.08)">Shopee</th>
+              <th style="background:rgba(0,134,209,.08)">Magalu</th>
+              <th>Melhor</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${state.products.slice(0,15).map(p => {
+              const custoBase = p.custoEdit + p.embalagem;
+              const mps = [
+                {nome:'ML C',taxa:12+4.5, fixo:6},
+                {nome:'ML P',taxa:17+4.5, fixo:6},
+                {nome:'AMZ',taxa:15+4.5, fixo:0},
+                {nome:'SHOP',taxa:14+2+4.5, fixo:0},
+                {nome:'MAG',taxa:16+4.5, fixo:0},
+              ];
+              const margins = mps.map(mp => {
+                const desc = p.precoVenda*(mp.taxa/100) + mp.fixo + p.frete;
+                const lucro = p.precoVenda - custoBase - desc;
+                return {nome:mp.nome, margem: p.precoVenda > 0 ? (lucro/p.precoVenda*100) : 0, lucro};
+              });
+              const best = margins.reduce((a,b) => a.margem > b.margem ? a : b);
+
+              return `<tr>
+                <td><span class="font-bold text-sm">${p.img} ${p.nome.substring(0,28)}</span></td>
+                <td class="font-mono text-sm">R$ ${custoBase.toFixed(2)}</td>
+                <td class="font-bold">R$ ${p.precoVenda.toFixed(2)}</td>
+                ${margins.map(m => `<td><span class="margin-pill ${m.margem>20?'margin-good':m.margem>0?'margin-ok':'margin-bad'}">${m.margem.toFixed(1)}%</span></td>`).join('')}
+                <td class="font-bold text-green text-sm">${best.nome}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ---------- STUDIO (placeholder) ----------
+function renderStudio(c) {
+  c.innerHTML = `
+    <div class="empty-state">
+      <div class="icon">ð¨</div>
+      <h3>VIMA Studio</h3>
+      <p class="text-muted">MÃ³dulo em desenvolvimento. GeraÃ§Ã£o automÃ¡tica de carrosseis criativos com IA.</p>
+      <span class="tag tag-beta mt-1">BETA â Em breve</span>
+    </div>
+  `;
+}
+
+// ---------- INIT ----------
+renderView();
+</script>
+</body>
+</html>
