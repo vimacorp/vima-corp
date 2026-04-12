@@ -1,0 +1,10 @@
+{
+    "name": "vima-corp",
+    "version": "1.0.0",
+    "description": "VIMA Corp - Plataforma inteligente para sellers de marketplace",
+    "private": true,
+    "dependencies": {
+          "@anthropic-ai/sdk": "^0.39.0",
+          "sharp": "^0.33.2"
+    }
+}
