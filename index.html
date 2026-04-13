@@ -534,36 +534,28 @@ async function parseXLSX(file) {
   const data = await file.arrayBuffer();
   const wb = XLSX.read(data, {type:'array'});
   const ws = wb.Sheets[wb.SheetNames[0]];
-  const allRows = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', raw:false});
+  // Method 1: use sheet_to_json with auto headers (most reliable)
+  let rows = XLSX.utils.sheet_to_json(ws, {defval:''});
+  console.log('VIMA XLSX method1: ' + rows.length + ' rows, keys:', rows.length>0 ? Object.keys(rows[0]).join(',') : 'none');
+  // If auto-header gives good results (>5 rows), use it
+  if(rows.length >= 5) return rows;
+  // Method 2: fallback to header:1 with smart detection
+  const allRows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+  console.log('VIMA XLSX method2: ' + allRows.length + ' total rows');
   if(allRows.length < 2) return [];
-  // Smart header detection: find first row with 3+ non-empty text cells in first 20 rows
-  let headerIdx = 0;
-  let maxScore = 0;
-  for(let i = 0; i < Math.min(allRows.length, 20); i++) {
+  // Find header: row with most non-empty cells in first 20 rows
+  let headerIdx = 0, maxCells = 0;
+  for(let i=0; i<Math.min(allRows.length, 20); i++) {
     const row = allRows[i];
     if(!Array.isArray(row)) continue;
-    const textCells = row.filter(c => {
-      const s = String(c).trim();
-      return s.length > 1 && isNaN(s.replace(/[R\$.,\s%]/g,''));
-    });
-    // Header rows typically have many text cells and few empty ones
-    const score = textCells.length * 2 - row.filter(c => String(c).trim() === '').length;
-    if(score > maxScore) { maxScore = score; headerIdx = i; }
+    const nonEmpty = row.filter(c => String(c).trim().length > 0).length;
+    if(nonEmpty > maxCells) { maxCells = nonEmpty; headerIdx = i; }
   }
-  const headerRow = allRows[headerIdx];
-  const header = headerRow.map(h => String(h).trim().toLowerCase());
-  console.log('VIMA: Header detectado na linha ' + headerIdx + ':', header.join(', '));
-  console.log('VIMA: Total de linhas de dados: ' + (allRows.length - headerIdx - 1));
-  const dataRows = allRows.slice(headerIdx + 1);
-  return dataRows.filter(r => {
-    if(!Array.isArray(r)) return false;
-    const nonEmpty = r.filter(c => String(c).trim() !== '').length;
-    return nonEmpty >= 2; // at least 2 non-empty cells
-  }).map(r => {
+  const header = allRows[headerIdx].map(h => String(h).trim().toLowerCase());
+  console.log('VIMA XLSX header at row '+headerIdx+':', header.join(', '));
+  return allRows.slice(headerIdx+1).filter(r => Array.isArray(r) && r.filter(c => String(c).trim()!=='').length >= 2).map(r => {
     const obj = {};
-    header.forEach((h, i) => {
-      if(h) obj[h] = r[i] !== undefined ? r[i] : '';
-    });
+    header.forEach((h,i) => { if(h) obj[h] = r[i] !== undefined ? r[i] : ''; });
     return obj;
   });
 }
@@ -692,27 +684,25 @@ async function parseImage(file) {
 function mapToProducts(rawRows, fileName) {
   if(rawRows.length === 0) return [];
   const keys = Object.keys(rawRows[0]);
+  console.log('VIMA mapToProducts: keys=', keys, 'rows=', rawRows.length);
 
-  // Smart column detection with multiple aliases (PT-BR + EN)
   const aliases = {
-    nome: ['nome','produto','descrição','descricao','description','item','name','titulo','título','mercadoria','denominação','denominacao','desc','product'],
-    sku: ['sku','codigo','código','cod','ref','referência','referencia','code','id','codprod','cod_prod','codproduto','barcode','ean','gtin','upc'],
-    custo: ['custo','preço custo','preco custo','custo unit','custo unitário','custo unitario','cost','unit cost','preço fornecedor','preco fornecedor','valor compra','vlr compra','preço compra','preco compra','vlr custo','valor custo','pcusto','p.custo','custo r$','custo(r$)'],
-    preco: ['preço','preco','preço venda','preco venda','price','valor','vlr','pvenda','p.venda','preço sugerido','preco sugerido','valor venda','preço tabela','preco tabela','sell price','vlr venda','pvp','preço r$','preco(r$)'],
-    peso: ['peso','weight','kg','peso kg','peso(kg)','peso bruto','peso líquido','peso liquido'],
-    cat: ['categoria','category','cat','departamento','depto','seção','secao','linha','grupo','subcategoria','tipo','classificação','classificacao','segmento'],
-    qtd: ['quantidade','qtd','qty','estoque','stock','disponível','disponivel','saldo'],
-    embalagem: ['embalagem','emb','packaging','custo embalagem'],
+    nome: ['nome','produto','descri\u00e7\u00e3o','descricao','description','item','name','titulo','t\u00edtulo','mercadoria','denomina\u00e7\u00e3o','denominacao','desc','product','material','artigo'],
+    sku: ['sku','codigo','c\u00f3digo','cod','ref','refer\u00eancia','referencia','code','id','codprod','cod_prod','codproduto','barcode','ean','gtin','upc'],
+    custo: ['custo','pre\u00e7o custo','preco custo','custo unit','custo unit\u00e1rio','custo unitario','cost','unit cost','pre\u00e7o fornecedor','preco fornecedor','valor compra','vlr compra','pre\u00e7o compra','preco compra','vlr custo','valor custo','pcusto','p.custo'],
+    preco: ['pre\u00e7o','preco','pre\u00e7o venda','preco venda','price','valor','vlr','pvenda','p.venda','pre\u00e7o sugerido','preco sugerido','valor venda','pre\u00e7o tabela','preco tabela','sell price','vlr venda','pvp'],
+    peso: ['peso','weight','kg'],
+    cat: ['categoria','category','cat','departamento','depto','se\u00e7\u00e3o','secao','linha','grupo','tipo'],
+    qtd: ['quantidade','qtd','qty','estoque','stock','dispon\u00edvel','disponivel','saldo'],
     marca: ['marca','brand','fabricante','fornecedor'],
   };
 
   function findCol(aliasKey) {
-    const alts = aliases[aliasKey];
+    const alts = aliases[aliasKey] || [];
     for(const alt of alts) {
       const found = keys.find(k => k.toLowerCase().replace(/[_\-\.\/]/g,' ').trim() === alt);
       if(found) return found;
     }
-    // Partial match
     for(const alt of alts) {
       const found = keys.find(k => k.toLowerCase().includes(alt));
       if(found) return found;
@@ -726,74 +716,67 @@ function mapToProducts(rawRows, fileName) {
   const colPreco = findCol('preco');
   const colPeso = findCol('peso');
   const colCat = findCol('cat');
-  const colQtd = findCol('qtd');
-  const colEmb = findCol('embalagem');
   const colMarca = findCol('marca');
 
-  // If no nome column found, try first text-heavy column
+  // Find name column: use alias match, or first column with long text
   let nameKey = colNome;
   if(!nameKey) {
-    nameKey = keys.find(k => {
-      const vals = rawRows.slice(0,5).map(r => String(r[k]));
-      return vals.every(v => v.length > 5 && isNaN(v));
-    });
-  }
-  if(!nameKey) {
-    // Last resort: use the first column with the longest average text
-    let bestKey = keys[0];
-    let bestLen = 0;
+    let bestKey = null, bestLen = 0;
     keys.forEach(k => {
-      const avg = rawRows.slice(0,10).reduce((s,r) => s + String(r[k]||'').length, 0) / Math.min(rawRows.length,10);
-      if(avg > bestLen) { bestLen = avg; bestKey = k; }
+      const sample = rawRows.slice(0, Math.min(20, rawRows.length));
+      const avgLen = sample.reduce((s,r) => s + String(r[k]||'').trim().length, 0) / sample.length;
+      const isText = sample.filter(r => { const v=String(r[k]||'').trim(); return v.length>2 && isNaN(v.replace(/[R\$.,\s%]/g,'')); }).length;
+      const score = avgLen + isText * 3;
+      if(score > bestLen) { bestLen = score; bestKey = k; }
     });
-    nameKey = bestKey;
-    console.log('VIMA: Nenhuma coluna nome encontrada, usando:', nameKey);
+    nameKey = bestKey || keys[0];
   }
 
-  // If no price columns found, try to find numeric columns
-  let custoKey = colCusto;
-  let precoKey = colPreco;
+  // Find cost/price columns: if not found by alias, use numeric columns
+  let custoKey = colCusto, precoKey = colPreco;
   if(!custoKey && !precoKey) {
     const numCols = keys.filter(k => {
-      const vals = rawRows.slice(0,5).map(r => parseNum(r[k]));
-      return vals.filter(v => v > 0).length >= 3;
+      if(k === nameKey || k === (colSku||'') || k === (colCat||'')) return false;
+      const sample = rawRows.slice(0, Math.min(20, rawRows.length));
+      const nums = sample.filter(r => parseNum(r[k]) > 0).length;
+      return nums >= sample.length * 0.4;
     });
     if(numCols.length >= 2) { custoKey = numCols[0]; precoKey = numCols[1]; }
     else if(numCols.length === 1) { custoKey = numCols[0]; }
   }
 
-  console.log('Mapeamento de colunas:', {nome:nameKey, sku:colSku, custo:custoKey, preco:precoKey, peso:colPeso, cat:colCat});
+  console.log('VIMA Mapeamento:', {nome:nameKey, sku:colSku, custo:custoKey, preco:precoKey, cat:colCat});
 
   function parseNum(v) {
     if(typeof v === 'number') return v;
     if(!v) return 0;
-    let s = String(v).replace(/[R$\s]/g,'');
-    // Handle BR format: 1.234,56
+    let s = String(v).replace(/[R\$\s]/g,'');
     if(s.includes(',') && s.includes('.')) {
       if(s.lastIndexOf(',') > s.lastIndexOf('.')) s = s.replace(/\./g,'').replace(',','.');
       else s = s.replace(/,/g,'');
-    } else if(s.includes(',')) {
-      s = s.replace(',','.');
-    }
+    } else if(s.includes(',')) { s = s.replace(',','.'); }
     return parseFloat(s) || 0;
   }
 
-  const catIcons = {'cozinha':'🍳','organização':'📦','organizacao':'📦','jardim':'🌱','iluminação':'💡','iluminacao':'💡','banheiro':'🚿','casa':'🏠','decoração':'🎨','decoracao':'🎨','quarto':'🛏️','sala':'🛋️','lavanderia':'👕','pet':'🐾','escritório':'📎','escritorio':'📎','limpeza':'🧹','bebê':'👶','bebe':'👶','ferramenta':'🔧','eletrônico':'📱','eletronico':'📱','esporte':'⚽','lazer':'🎮','default':'📦'};
+  const catIcons = {'cozinha':'\ud83c\udf73','organiza\u00e7\u00e3o':'\ud83d\udce6','jardim':'\ud83c\udf31','ilumina\u00e7\u00e3o':'\ud83d\udca1','banheiro':'\ud83d\udebf','casa':'\ud83c\udfe0','decora\u00e7\u00e3o':'\ud83c\udfa8','default':'\ud83d\udce6'};
 
-  return rawRows.map((row, i) => {
+  // MAP ALL ROWS - never discard products
+  const products = rawRows.map((row, i) => {
     const nome = String(row[nameKey] || '').trim();
-    if(!nome || nome.length < 3) return null;
+    if(!nome || nome.length < 1) return null; // only skip truly empty
     const custo = custoKey ? parseNum(row[custoKey]) : 0;
     const preco = precoKey ? parseNum(row[precoKey]) : 0;
     const peso = colPeso ? parseNum(row[colPeso]) : 0.5;
-    const sku = colSku ? String(row[colSku]).trim() : `SKU-${String(i+1).padStart(3,'0')}`;
+    const sku = colSku ? String(row[colSku]).trim() : 'SKU-'+String(i+1).padStart(3,'0');
     const cat = colCat ? String(row[colCat]).trim() : 'Geral';
     const catLow = cat.toLowerCase();
-    const img = catIcons[catLow] || catIcons.default;
+    const img = Object.entries(catIcons).find(([k]) => catLow.includes(k))?.[1] || catIcons.default;
     const marca = colMarca ? String(row[colMarca]).trim() : '';
-
-    return { sku, nome: marca && !nome.toLowerCase().includes(marca.toLowerCase()) ? `${nome} ${marca}` : nome, custo, peso, cat, img, precoVenda: preco || custo * 2.5, custoOriginal: custo };
+    return { sku, nome: marca && !nome.toLowerCase().includes(marca.toLowerCase()) ? nome+' '+marca : nome, custo, peso, cat, img, precoVenda: preco || (custo > 0 ? custo*2.5 : 0), custoOriginal: custo };
   }).filter(Boolean);
+
+  console.log('VIMA: '+products.length+' produtos mapeados de '+rawRows.length+' linhas');
+  return products;
 }
 
 // ---------- ENRICH PRODUCTS (add metrics) ----------
