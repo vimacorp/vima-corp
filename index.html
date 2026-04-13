@@ -509,6 +509,7 @@ async function handleFileUpload(e) {
       return;
     }
     const products = mapToProducts(rawRows, file.name);
+    console.log('VIMA: rawRows=' + rawRows.length + ', products=' + products.length);
     if(products.length === 0) {
       alert('Não foi possível identificar produtos. O arquivo precisa ter pelo menos coluna de nome/descrição e preço/custo.');
       hideUploadStatus();
@@ -533,12 +534,36 @@ async function parseXLSX(file) {
   const data = await file.arrayBuffer();
   const wb = XLSX.read(data, {type:'array'});
   const ws = wb.Sheets[wb.SheetNames[0]];
-  const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
-  if(rows.length < 2) return [];
-  const header = rows[0].map(h => String(h).trim().toLowerCase());
-  return rows.slice(1).filter(r => r.some(c => c !== '')).map(r => {
+  const allRows = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', raw:false});
+  if(allRows.length < 2) return [];
+  // Smart header detection: find first row with 3+ non-empty text cells in first 20 rows
+  let headerIdx = 0;
+  let maxScore = 0;
+  for(let i = 0; i < Math.min(allRows.length, 20); i++) {
+    const row = allRows[i];
+    if(!Array.isArray(row)) continue;
+    const textCells = row.filter(c => {
+      const s = String(c).trim();
+      return s.length > 1 && isNaN(s.replace(/[R\$.,\s%]/g,''));
+    });
+    // Header rows typically have many text cells and few empty ones
+    const score = textCells.length * 2 - row.filter(c => String(c).trim() === '').length;
+    if(score > maxScore) { maxScore = score; headerIdx = i; }
+  }
+  const headerRow = allRows[headerIdx];
+  const header = headerRow.map(h => String(h).trim().toLowerCase());
+  console.log('VIMA: Header detectado na linha ' + headerIdx + ':', header.join(', '));
+  console.log('VIMA: Total de linhas de dados: ' + (allRows.length - headerIdx - 1));
+  const dataRows = allRows.slice(headerIdx + 1);
+  return dataRows.filter(r => {
+    if(!Array.isArray(r)) return false;
+    const nonEmpty = r.filter(c => String(c).trim() !== '').length;
+    return nonEmpty >= 2; // at least 2 non-empty cells
+  }).map(r => {
     const obj = {};
-    header.forEach((h,i) => { obj[h] = r[i] !== undefined ? r[i] : ''; });
+    header.forEach((h, i) => {
+      if(h) obj[h] = r[i] !== undefined ? r[i] : '';
+    });
     return obj;
   });
 }
@@ -559,13 +584,24 @@ async function parseCSV(file, sep) {
     result.push(cur.trim());
     return result;
   }
-  // Auto-detect separator if comma gives 1 col
+  // Auto-detect separator
   const testComma = parseLine(lines[0]);
   if(testComma.length <= 1 && sep===',') {
     sep = lines[0].includes(';') ? ';' : lines[0].includes('\t') ? '\t' : ',';
   }
-  const header = parseLine(lines[0]).map(h => h.replace(/^["']|["']$/g,'').trim().toLowerCase());
-  return lines.slice(1).map(line => {
+  // Smart header detection: find first line with 3+ text fields
+  let headerIdx = 0;
+  for(let i = 0; i < Math.min(lines.length, 15); i++) {
+    const fields = parseLine(lines[i]);
+    const textFields = fields.filter(f => {
+      const s = f.replace(/^["']|["']$/g,'').trim();
+      return s.length > 1 && isNaN(s.replace(/[R\$.,\s%]/g,''));
+    });
+    if(textFields.length >= 3) { headerIdx = i; break; }
+  }
+  const header = parseLine(lines[headerIdx]).map(h => h.replace(/^["']|["']$/g,'').trim().toLowerCase());
+  console.log('VIMA CSV: Header na linha ' + headerIdx + ':', header.join(', '));
+  return lines.slice(headerIdx+1).map(line => {
     const vals = parseLine(line);
     const obj = {};
     header.forEach((h,i) => { obj[h] = vals[i] !== undefined ? vals[i].replace(/^["']|["']$/g,'') : ''; });
@@ -702,7 +738,17 @@ function mapToProducts(rawRows, fileName) {
       return vals.every(v => v.length > 5 && isNaN(v));
     });
   }
-  if(!nameKey) return [];
+  if(!nameKey) {
+    // Last resort: use the first column with the longest average text
+    let bestKey = keys[0];
+    let bestLen = 0;
+    keys.forEach(k => {
+      const avg = rawRows.slice(0,10).reduce((s,r) => s + String(r[k]||'').length, 0) / Math.min(rawRows.length,10);
+      if(avg > bestLen) { bestLen = avg; bestKey = k; }
+    });
+    nameKey = bestKey;
+    console.log('VIMA: Nenhuma coluna nome encontrada, usando:', nameKey);
+  }
 
   // If no price columns found, try to find numeric columns
   let custoKey = colCusto;
